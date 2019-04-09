@@ -1,0 +1,104 @@
+-- partially based on Latte language grammar
+-- programs ------------------------------------------------
+
+entrypoints Program ;
+Program.    Program ::= [Stmt] ;
+
+-- statements ----------------------------------------------
+
+Block.     Block ::= "{" [Stmt] "}" ;
+separator  Stmt "" ;
+Empty.     Stmt ::= ";" ;
+BStmt.     Stmt ::= Block ;
+Decl.      Stmt ::= Type [Item] ";" ;
+NoInit.    Item ::= Ident ;
+Init.      Item ::= Ident "=" Expr ;
+separator nonempty Item "," ;
+
+Ass.       Stmt ::= Ident "=" Expr  ";" ;
+StructAss. Stmt ::= Ident "." Field "=" Expr ";" ;
+Ret.       Stmt ::= "return" Expr ";" ;
+VRet.      Stmt ::= "return" ";" ;
+Cond.      Stmt ::= "if" "(" Expr ")" Block  ;
+CondElse.  Stmt ::= "if" "(" Expr ")" Block "else" Block  ;
+While.     Stmt ::= "while" "(" Expr ")" Block ;
+SExp.      Stmt ::= Expr ";" ;
+
+Function.  Stmt ::= "func" Type Ident "(" [Arg] ")" Block ;
+ValArg.    Arg ::= Type Ident ;
+RefArg.    Arg ::= Type "&" Ident ;
+separator  Arg "," ;
+
+GeneratorDef. Stmt ::= "func*" Type Ident "(" [Arg] ")" GenBlock ;
+GenBlock.  GenBlock ::= "{" [GenStmt] "}" ;
+GenStmt.   GenStmt ::= Stmt ;
+separator  GenStmt "" ;
+Yeld.      GenStmt ::= "yeld" Expr ";" ;
+
+StructDef. Stmt ::= "struct" Ident "{" [StructItem] "}" ;
+StructItem. StructItem ::= Type Ident ;
+separator   StructItem ";" ;
+
+-- Operations ----------------------------------------------
+
+Print.     Stmt ::= "print" Expr ";" ;
+
+ListDrop. Stmt ::= Ident "." "drop" "(" ")" ";" ;
+ListAdd.  Stmt ::= Ident "." "add" "(" Expr ")" ";" ;
+EListLength. Expr6 ::= Ident "." "length" ;
+EListElem.   Expr6 ::= Ident "[" Expr "]" ;
+
+EStructField. Expr6 ::= Ident "." Field ;
+SingleField. Field ::= Ident ;
+ManyFields.  Field ::= Ident "." Ident ;
+
+ENextGen. Expr6 ::= Ident "." "next" "(" ")" ;
+
+-- Types ---------------------------------------------------
+
+Int.       Type ::= "int" ;
+Str.       Type ::= "string" ;
+Bool.      Type ::= "bool" ;
+Void.      Type ::= "void" ;
+List.      Type ::= "[" Type "]" ;
+Struct.    Type ::= "struct" Ident ;
+Generator. Type ::= "gen" Type Ident ;
+
+-- Expressions ---------------------------------------------
+
+EVar.      Expr6 ::= Ident ;
+ELitInt.   Expr6 ::= Integer ;
+ELitList.  Expr6 ::= "[]" ;
+ELitTrue.  Expr6 ::= "true" ;
+ELitFalse. Expr6 ::= "false" ;
+EApp.      Expr6 ::= Ident "(" [Expr] ")" ;
+EString.   Expr6 ::= String ;
+Neg.       Expr5 ::= "-" Expr6 ;
+Not.       Expr5 ::= "!" Expr6 ;
+EMul.      Expr4 ::= Expr4 MulOp Expr5 ;
+EAdd.      Expr3 ::= Expr3 AddOp Expr4 ;
+ERel.      Expr2 ::= Expr2 RelOp Expr3 ;
+EAnd.      Expr1 ::= Expr2 "&&" Expr1 ;
+EOr.       Expr ::= Expr1 "||" Expr ;
+
+coercions  Expr 6 ;
+separator  Expr "," ;
+
+-- operators -----------------------------------------------
+
+Plus.      AddOp ::= "+" ;
+Minus.     AddOp ::= "-" ;
+Times.     MulOp ::= "*" ;
+Div.       MulOp ::= "/" ;
+Mod.       MulOp ::= "%" ;
+LTH.       RelOp ::= "<" ;
+LE.        RelOp ::= "<=" ;
+GTH.       RelOp ::= ">" ;
+GE.        RelOp ::= ">=" ;
+EQU.       RelOp ::= "==" ;
+NE.        RelOp ::= "!=" ;
+
+-- comments ------------------------------------------------
+
+comment    "//" ;
+comment    "/*" "*/" ;
