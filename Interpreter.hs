@@ -63,6 +63,35 @@ evalExp (EMul exp1 mulOp exp2) = do
   result <- makeMulOp mulOp res1 res2
   return result
 
+evalExp (ERel exp1 relOp exp2) = do
+  Just res1 <- evalExp exp1
+  Just res2 <- evalExp exp2
+  return $ Just $ BoolVar (makeRelOp relOp res1 res2)
+
+evalExp (EAnd exp1 exp2) = do
+  Just (BoolVar res1) <- evalExp exp1
+  if res1 then do
+    res2 <- evalExp exp2
+    return res2
+  else
+    return $ Just (BoolVar False)
+
+evalExp (EOr exp1 exp2) = do
+  Just (BoolVar res1) <- evalExp exp1
+  if res1 then
+    return $ Just (BoolVar True)
+  else do
+    res2 <- evalExp exp2
+    return res2
+
+evalExp (Not exp) = do
+  Just (BoolVar res) <- evalExp exp
+  return $ Just $ BoolVar $ not res
+
+evalExp (Neg exp) = do
+  Just (IntVar res) <- evalExp exp
+  return $ Just $ IntVar $ -res
+
 makeAddOp :: AddOp -> Memory -> Memory -> Memory
 makeAddOp Plus (StringVar s1) (StringVar s2) = StringVar $ s1 ++ s2
 makeAddOp Plus (IntVar i1) (IntVar i2) = IntVar $ i1 + i2
@@ -80,3 +109,11 @@ makeMulOp Div (IntVar i1) (IntVar i2) = do
     throwError ZeroDivException
   else
     return $ Just $ IntVar $ quot i1 i2
+
+makeRelOp :: RelOp -> Memory -> Memory -> Bool
+makeRelOp EQU val1 val2 = val1 == val2
+makeRelOp NE val1 val2 = val1 /= val2
+makeRelOp LTH (IntVar i1) (IntVar i2) = i1 < i2
+makeRelOp LE (IntVar i1) (IntVar i2) = i1 <= i2
+makeRelOp GTH (IntVar i1) (IntVar i2) = i1 > i2
+makeRelOp GE (IntVar i1) (IntVar i2) = i1 >= i2
