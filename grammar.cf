@@ -33,7 +33,7 @@ GeneratorDef. Stmt ::= "func*" Type Ident "(" [Arg] ")" GenBlock ;
 GenBlock.  GenBlock ::= "{" [GenStmt] "}" ;
 GenStmt.   GenStmt ::= Stmt ;
 separator  GenStmt "" ;
-Yeld.      GenStmt ::= "yeld" Expr ";" ;
+Yield.     GenStmt ::= "yield" Expr ";" ;
 
 StructDef. Stmt ::= "struct" Ident "{" [StructItem] "}" ;
 StructItem. StructItem ::= Type Ident ;
