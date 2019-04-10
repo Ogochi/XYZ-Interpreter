@@ -26,10 +26,8 @@ runFile mode f = readFile f >>= run mode
 
 run :: Mode -> String -> IO ()
 run mode s = let ts = myLLexer s in case pProgram ts of
-           Bad s    -> do hPutStrLn stderr "\nParse              Failed...\n"
-                          hPutStrLn stderr "Tokens:"
-                          hPutStrLn stderr $ show ts
-                          hPutStrLn stderr s
+           Bad s    -> do
+                          hPutStrLn stderr "\nParse failed...\n"
                           exitFailure
            Ok  (Program tree) -> do
                           result <- runInterpret tree mode
@@ -60,5 +58,5 @@ main = do
   args <- getArgs
   case args of
     ["--help"] -> usage
-    [] -> hGetContents stdin >>= run Interactive
+    [] -> hGetContents stdin >>= run StdinMode
     fs -> mapM_ (runFile FileMode) fs

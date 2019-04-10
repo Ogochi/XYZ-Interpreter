@@ -92,7 +92,7 @@ Stmt : ';' { AbsGrammar.Empty }
      | 'func' Type Ident '(' ListArg ')' Block { AbsGrammar.Function $2 $3 $5 $7 }
      | 'func*' Type Ident '(' ListArg ')' GenBlock { AbsGrammar.GeneratorDef $2 $3 $5 $7 }
      | 'struct' Ident '{' ListStructItem '}' { AbsGrammar.StructDef $2 (reverse $4) }
-     | 'print' Expr ';' { AbsGrammar.Print $2 }
+     | 'print' '(' Expr ')' ';' { AbsGrammar.Print $3 }
      | Ident '.' 'drop' '(' ')' ';' { AbsGrammar.ListDrop $1 }
      | Ident '.' 'add' '(' Expr ')' ';' { AbsGrammar.ListAdd $1 $5 }
 Item :: { Item }

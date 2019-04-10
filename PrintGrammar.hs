@@ -107,7 +107,7 @@ instance Print Stmt where
     Function type_ id args block -> prPrec i 0 (concatD [doc (showString "func"), prt 0 type_, prt 0 id, doc (showString "("), prt 0 args, doc (showString ")"), prt 0 block])
     GeneratorDef type_ id args genblock -> prPrec i 0 (concatD [doc (showString "func*"), prt 0 type_, prt 0 id, doc (showString "("), prt 0 args, doc (showString ")"), prt 0 genblock])
     StructDef id structitems -> prPrec i 0 (concatD [doc (showString "struct"), prt 0 id, doc (showString "{"), prt 0 structitems, doc (showString "}")])
-    Print expr -> prPrec i 0 (concatD [doc (showString "print"), prt 0 expr, doc (showString ";")])
+    Print expr -> prPrec i 0 (concatD [doc (showString "print"), doc (showString "("), prt 0 expr, doc (showString ")"), doc (showString ";")])
     ListDrop id -> prPrec i 0 (concatD [prt 0 id, doc (showString "."), doc (showString "drop"), doc (showString "("), doc (showString ")"), doc (showString ";")])
     ListAdd id expr -> prPrec i 0 (concatD [prt 0 id, doc (showString "."), doc (showString "add"), doc (showString "("), prt 0 expr, doc (showString ")"), doc (showString ";")])
   prtList _ [] = (concatD [])

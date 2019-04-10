@@ -74,7 +74,7 @@ All other symbols are terminals.
   |  |  **|**  | ``func`` //Type// //Ident// ``(`` //[Arg]// ``)`` //Block// 
   |  |  **|**  | ``func*`` //Type// //Ident// ``(`` //[Arg]// ``)`` //GenBlock// 
   |  |  **|**  | ``struct`` //Ident// ``{`` //[StructItem]// ``}`` 
-  |  |  **|**  | ``print`` //Expr// ``;`` 
+  |  |  **|**  | ``print`` ``(`` //Expr// ``)`` ``;`` 
   |  |  **|**  | //Ident// ``.`` ``drop`` ``(`` ``)`` ``;`` 
   |  |  **|**  | //Ident// ``.`` ``add`` ``(`` //Expr// ``)`` ``;`` 
   | //Item// | -> | //Ident// 

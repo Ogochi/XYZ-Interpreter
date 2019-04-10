@@ -7,7 +7,7 @@ import Control.Monad.Reader
 import Control.Monad.State
 import Control.Monad.Except
 
-data Mode = Interactive | FileMode
+data Mode = StdinMode | FileMode
 
 type IdentString = String
 type Location = Integer
@@ -19,4 +19,5 @@ type PState = (Map Location Memory, Location, Mode)
 
 data RuntimeException = ZeroDivException | ZeroModException
 
-type PStateMonad = ReaderT Env (StateT PState (ExceptT RuntimeException IO)) (Maybe Memory)
+type ReturnResult = Maybe Memory
+type PStateMonad = ReaderT Env (StateT PState (ExceptT RuntimeException IO))

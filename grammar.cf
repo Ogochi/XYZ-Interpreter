@@ -41,7 +41,7 @@ separator   StructItem "" ;
 
 -- Operations ----------------------------------------------
 
-Print.     Stmt ::= "print" Expr ";" ;
+Print.     Stmt ::= "print" "(" Expr ")" ";" ;
 
 ListDrop. Stmt ::= Ident "." "drop" "(" ")" ";" ;
 ListAdd.  Stmt ::= Ident "." "add" "(" Expr ")" ";" ;

@@ -2,6 +2,7 @@ module Interpreter where
 
 import AbsGrammar
 import Types
+import Utils
 
 import Data.Map as Map
 import Data.Maybe
@@ -9,10 +10,10 @@ import Control.Monad.Reader
 import Control.Monad.State
 import Control.Monad.Except
 
-runInterpret :: [Stmt] -> Mode -> IO (Either RuntimeException (Maybe Memory))
+runInterpret :: [Stmt] -> Mode -> IO (Either RuntimeException ReturnResult)
 runInterpret tree mode = runExceptT $ evalStateT (runReaderT (interpretStmts tree) Map.empty) (Map.empty, 0, mode)
 
-interpretStmts :: [Stmt] -> PStateMonad
+interpretStmts :: [Stmt] -> PStateMonad ReturnResult
 interpretStmts (x:rest) = do
   result <- execStmt x
   if isJust result then
@@ -22,7 +23,7 @@ interpretStmts (x:rest) = do
     return restResult
 interpretStmts [] = return Nothing
 
-execStmt :: Stmt -> PStateMonad
+execStmt :: Stmt -> PStateMonad ReturnResult
 
 -- Empty
 execStmt Empty = return Nothing
@@ -32,13 +33,19 @@ execStmt (BStmt (Block stmts)) = do
   result <- local id (interpretStmts stmts)
   return result
 
+-- Print
+execStmt (Print exp) = evalExp exp >>= liftIO . putStr . show . fromJust >> return Nothing
+
 -- SExp
-execStmt (SExp expr) = do
-  result <- evalExp expr
+execStmt (SExp exp) = do
+  Just result <- evalExp exp
+  mode <- getInterpreterMode
+  case mode of
+    StdinMode -> liftIO . putStr . show $ result
 
   return Nothing
 
-evalExp :: Expr -> PStateMonad
+evalExp :: Expr -> PStateMonad ReturnResult
 
 evalExp (ELitInt num) = return $ Just (IntVar num)
 evalExp ELitTrue = return $ Just (BoolVar True)
@@ -61,9 +68,13 @@ makeAddOp Plus (StringVar s1) (StringVar s2) = StringVar $ s1 ++ s2
 makeAddOp Plus (IntVar i1) (IntVar i2) = IntVar $ i1 + i2
 makeAddOp Minus (IntVar i1) (IntVar i2) = IntVar $ i1 - i2
 
-makeMulOp :: MulOp -> Memory -> Memory -> PStateMonad
+makeMulOp :: MulOp -> Memory -> Memory -> PStateMonad ReturnResult
 makeMulOp Times (IntVar i1) (IntVar i2) = return $ Just $ IntVar $ i1 * i2
-makeMulOp Mod (IntVar i1) (IntVar i2) = return $ Just $ IntVar $ i1 `mod` i2
+makeMulOp Mod (IntVar i1) (IntVar i2) = do
+  if i2 == 0 then
+    throwError ZeroModException
+  else
+    return $ Just $ IntVar $ i1 `mod` i2
 makeMulOp Div (IntVar i1) (IntVar i2) = do
   if i2 == 0 then
     throwError ZeroDivException
