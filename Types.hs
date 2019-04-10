@@ -14,9 +14,9 @@ type Location = Integer
 
 type Env = Map IdentString Location
 
-data Memory = IntVar Integer | BoolVar Bool | StringVar String
+data Memory = IntVar Integer | BoolVar Bool | StringVar String deriving (Show, Eq)
 type PState = (Map Location Memory, Location, Mode)
 
-data RuntimeException = OperationNotSupportedException | ZeroDivException | ZeroModException
+data RuntimeException = ZeroDivException | ZeroModException
 
 type PStateMonad = ReaderT Env (StateT PState (ExceptT RuntimeException IO)) (Maybe Memory)

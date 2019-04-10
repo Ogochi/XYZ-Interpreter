@@ -40,7 +40,6 @@ run mode s = let ts = myLLexer s in case pProgram ts of
 
                               case exception of
                                 ZeroDivException -> hPutStrLn stderr "Dividing by 0 is forbidden."
-                                OperationNotSupportedException -> hPutStrLn stderr "Operation is not supported."
                               exitFailure
 
                             Right _ -> do exitSuccess
