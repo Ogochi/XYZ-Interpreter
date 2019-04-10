@@ -97,7 +97,7 @@ instance Print Stmt where
     BStmt block -> prPrec i 0 (concatD [prt 0 block])
     Decl type_ items -> prPrec i 0 (concatD [prt 0 type_, prt 0 items, doc (showString ";")])
     Ass id expr -> prPrec i 0 (concatD [prt 0 id, doc (showString "="), prt 0 expr, doc (showString ";")])
-    StructAss id field expr -> prPrec i 0 (concatD [prt 0 id, doc (showString "."), prt 0 field, doc (showString "="), prt 0 expr, doc (showString ";")])
+    StructAss id fields expr -> prPrec i 0 (concatD [prt 0 id, doc (showString "."), prt 0 fields, doc (showString "="), prt 0 expr, doc (showString ";")])
     Ret expr -> prPrec i 0 (concatD [doc (showString "return"), prt 0 expr, doc (showString ";")])
     VRet -> prPrec i 0 (concatD [doc (showString "return"), doc (showString ";")])
     Cond expr block -> prPrec i 0 (concatD [doc (showString "if"), doc (showString "("), prt 0 expr, doc (showString ")"), prt 0 block])
@@ -132,20 +132,19 @@ instance Print GenBlock where
 instance Print GenStmt where
   prt i e = case e of
     GenStmt stmt -> prPrec i 0 (concatD [prt 0 stmt])
-    Yeld expr -> prPrec i 0 (concatD [doc (showString "yeld"), prt 0 expr, doc (showString ";")])
+    Yield expr -> prPrec i 0 (concatD [doc (showString "yield"), prt 0 expr, doc (showString ";")])
   prtList _ [] = (concatD [])
   prtList _ (x:xs) = (concatD [prt 0 x, prt 0 xs])
 instance Print StructItem where
   prt i e = case e of
-    StructItem type_ id -> prPrec i 0 (concatD [prt 0 type_, prt 0 id])
+    StructItem type_ id -> prPrec i 0 (concatD [prt 0 type_, prt 0 id, doc (showString ";")])
   prtList _ [] = (concatD [])
-  prtList _ [x] = (concatD [prt 0 x])
-  prtList _ (x:xs) = (concatD [prt 0 x, doc (showString ";"), prt 0 xs])
+  prtList _ (x:xs) = (concatD [prt 0 x, prt 0 xs])
 instance Print Field where
   prt i e = case e of
-    SingleField id -> prPrec i 0 (concatD [prt 0 id])
-    ManyFields id1 id2 -> prPrec i 0 (concatD [prt 0 id1, doc (showString "."), prt 0 id2])
-
+    Field id -> prPrec i 0 (concatD [prt 0 id])
+  prtList _ [x] = (concatD [prt 0 x])
+  prtList _ (x:xs) = (concatD [prt 0 x, doc (showString "."), prt 0 xs])
 instance Print Type where
   prt i e = case e of
     Int -> prPrec i 0 (concatD [doc (showString "int")])
@@ -154,13 +153,13 @@ instance Print Type where
     Void -> prPrec i 0 (concatD [doc (showString "void")])
     List type_ -> prPrec i 0 (concatD [doc (showString "["), prt 0 type_, doc (showString "]")])
     Struct id -> prPrec i 0 (concatD [doc (showString "struct"), prt 0 id])
-    Generator type_ id -> prPrec i 0 (concatD [doc (showString "gen"), prt 0 type_, prt 0 id])
+    Generator type_ -> prPrec i 0 (concatD [doc (showString "Generator"), doc (showString "<"), prt 0 type_, doc (showString ">")])
 
 instance Print Expr where
   prt i e = case e of
     EListLength id -> prPrec i 6 (concatD [prt 0 id, doc (showString "."), doc (showString "length")])
     EListElem id expr -> prPrec i 6 (concatD [prt 0 id, doc (showString "["), prt 0 expr, doc (showString "]")])
-    EStructField id field -> prPrec i 6 (concatD [prt 0 id, doc (showString "."), prt 0 field])
+    EStructField id fields -> prPrec i 6 (concatD [prt 0 id, doc (showString "."), prt 0 fields])
     ENextGen id -> prPrec i 6 (concatD [prt 0 id, doc (showString "."), doc (showString "next"), doc (showString "("), doc (showString ")")])
     EVar id -> prPrec i 6 (concatD [prt 0 id])
     ELitInt n -> prPrec i 6 (concatD [prt 0 n])

@@ -32,19 +32,19 @@ except ``"`` unless preceded by ``\``.
 The set of reserved words is the set of terminals appearing in the grammar. Those reserved words that consist of non-letter characters are called symbols, and they are treated in a different way from those that are similar to identifiers. The lexer follows rules familiar from languages like Haskell, C, and Java, including longest match and spacing conventions.
 
 The reserved words used in grammar are the following:
-  | ``add`` | ``bool`` | ``drop`` | ``else``
-  | ``false`` | ``func`` | ``gen`` | ``if``
+  | ``Generator`` | ``add`` | ``bool`` | ``drop``
+  | ``else`` | ``false`` | ``func`` | ``if``
   | ``int`` | ``length`` | ``next`` | ``print``
   | ``return`` | ``string`` | ``struct`` | ``true``
-  | ``void`` | ``while`` | ``yeld`` | 
+  | ``void`` | ``while`` | ``yield`` | 
 
 The symbols used in grammar are the following:
   | { | } | ; | =
   | , | . | ( | )
   | & | func* | [ | ]
-  | [] | - | ! | &&
-  | || | + | * | /
-  | % | < | <= | >
+  | < | > | [] | -
+  | ! | && | || | +
+  | * | / | % | <=
   | >= | == | != | 
 
 ===Comments===
@@ -64,7 +64,7 @@ All other symbols are terminals.
   |  |  **|**  | //Block// 
   |  |  **|**  | //Type// //[Item]// ``;`` 
   |  |  **|**  | //Ident// ``=`` //Expr// ``;`` 
-  |  |  **|**  | //Ident// ``.`` //Field// ``=`` //Expr// ``;`` 
+  |  |  **|**  | //Ident// ``.`` //[Field]// ``=`` //Expr// ``;`` 
   |  |  **|**  | ``return`` //Expr// ``;`` 
   |  |  **|**  | ``return`` ``;`` 
   |  |  **|**  | ``if`` ``(`` //Expr// ``)`` //Block// 
@@ -88,16 +88,15 @@ All other symbols are terminals.
   |  |  **|**  | //Arg// ``,`` //[Arg]// 
   | //GenBlock// | -> | ``{`` //[GenStmt]// ``}`` 
   | //GenStmt// | -> | //Stmt// 
-  |  |  **|**  | ``yeld`` //Expr// ``;`` 
+  |  |  **|**  | ``yield`` //Expr// ``;`` 
   | //[GenStmt]// | -> | **eps**
   |  |  **|**  | //GenStmt// //[GenStmt]// 
-  | //StructItem// | -> | //Type// //Ident// 
+  | //StructItem// | -> | //Type// //Ident// ``;`` 
   | //[StructItem]// | -> | **eps**
-  |  |  **|**  | //StructItem// 
-  |  |  **|**  | //StructItem// ``;`` //[StructItem]// 
+  |  |  **|**  | //StructItem// //[StructItem]// 
   | //Expr6// | -> | //Ident// ``.`` ``length`` 
   |  |  **|**  | //Ident// ``[`` //Expr// ``]`` 
-  |  |  **|**  | //Ident// ``.`` //Field// 
+  |  |  **|**  | //Ident// ``.`` //[Field]// 
   |  |  **|**  | //Ident// ``.`` ``next`` ``(`` ``)`` 
   |  |  **|**  | //Ident// 
   |  |  **|**  | //Integer// 
@@ -108,14 +107,15 @@ All other symbols are terminals.
   |  |  **|**  | //String// 
   |  |  **|**  | ``(`` //Expr// ``)`` 
   | //Field// | -> | //Ident// 
-  |  |  **|**  | //Ident// ``.`` //Ident// 
+  | //[Field]// | -> | //Field// 
+  |  |  **|**  | //Field// ``.`` //[Field]// 
   | //Type// | -> | ``int`` 
   |  |  **|**  | ``string`` 
   |  |  **|**  | ``bool`` 
   |  |  **|**  | ``void`` 
   |  |  **|**  | ``[`` //Type// ``]`` 
   |  |  **|**  | ``struct`` //Ident// 
-  |  |  **|**  | ``gen`` //Type// //Ident// 
+  |  |  **|**  | ``Generator`` ``<`` //Type// ``>`` 
   | //Expr5// | -> | ``-`` //Expr6// 
   |  |  **|**  | ``!`` //Expr6// 
   |  |  **|**  | //Expr6// 

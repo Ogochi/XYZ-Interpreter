@@ -19,7 +19,7 @@ data Stmt
     | BStmt Block
     | Decl Type [Item]
     | Ass Ident Expr
-    | StructAss Ident Field Expr
+    | StructAss Ident [Field] Expr
     | Ret Expr
     | VRet
     | Cond Expr Block
@@ -43,13 +43,13 @@ data Arg = ValArg Type Ident | RefArg Type Ident
 data GenBlock = GenBlock [GenStmt]
   deriving (Eq, Ord, Show, Read)
 
-data GenStmt = GenStmt Stmt | Yeld Expr
+data GenStmt = GenStmt Stmt | Yield Expr
   deriving (Eq, Ord, Show, Read)
 
 data StructItem = StructItem Type Ident
   deriving (Eq, Ord, Show, Read)
 
-data Field = SingleField Ident | ManyFields Ident Ident
+data Field = Field Ident
   deriving (Eq, Ord, Show, Read)
 
 data Type
@@ -59,13 +59,13 @@ data Type
     | Void
     | List Type
     | Struct Ident
-    | Generator Type Ident
+    | Generator Type
   deriving (Eq, Ord, Show, Read)
 
 data Expr
     = EListLength Ident
     | EListElem Ident Expr
-    | EStructField Ident Field
+    | EStructField Ident [Field]
     | ENextGen Ident
     | EVar Ident
     | ELitInt Integer

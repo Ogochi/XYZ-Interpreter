@@ -16,7 +16,7 @@ Init.      Item ::= Ident "=" Expr ;
 separator nonempty Item "," ;
 
 Ass.       Stmt ::= Ident "=" Expr  ";" ;
-StructAss. Stmt ::= Ident "." Field "=" Expr ";" ;
+StructAss. Stmt ::= Ident "." [Field] "=" Expr ";" ;
 Ret.       Stmt ::= "return" Expr ";" ;
 VRet.      Stmt ::= "return" ";" ;
 Cond.      Stmt ::= "if" "(" Expr ")" Block  ;
@@ -36,8 +36,8 @@ separator  GenStmt "" ;
 Yield.     GenStmt ::= "yield" Expr ";" ;
 
 StructDef. Stmt ::= "struct" Ident "{" [StructItem] "}" ;
-StructItem. StructItem ::= Type Ident ;
-separator   StructItem ";" ;
+StructItem. StructItem ::= Type Ident ";" ;
+separator   StructItem "" ;
 
 -- Operations ----------------------------------------------
 
@@ -48,9 +48,9 @@ ListAdd.  Stmt ::= Ident "." "add" "(" Expr ")" ";" ;
 EListLength. Expr6 ::= Ident "." "length" ;
 EListElem.   Expr6 ::= Ident "[" Expr "]" ;
 
-EStructField. Expr6 ::= Ident "." Field ;
-SingleField. Field ::= Ident ;
-ManyFields.  Field ::= Ident "." Ident ;
+EStructField. Expr6 ::= Ident "." [Field] ;
+Field. Field ::= Ident ;
+separator nonempty Field "." ;
 
 ENextGen. Expr6 ::= Ident "." "next" "(" ")" ;
 
@@ -62,7 +62,7 @@ Bool.      Type ::= "bool" ;
 Void.      Type ::= "void" ;
 List.      Type ::= "[" Type "]" ;
 Struct.    Type ::= "struct" Ident ;
-Generator. Type ::= "gen" Type Ident ;
+Generator. Type ::= "Generator" "<" Type ">" ;
 
 -- Expressions ---------------------------------------------
 

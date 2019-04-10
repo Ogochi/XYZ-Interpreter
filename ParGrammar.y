@@ -33,17 +33,17 @@ import ErrM
   '==' { PT _ (TS _ 18) }
   '>' { PT _ (TS _ 19) }
   '>=' { PT _ (TS _ 20) }
-  '[' { PT _ (TS _ 21) }
-  '[]' { PT _ (TS _ 22) }
-  ']' { PT _ (TS _ 23) }
-  'add' { PT _ (TS _ 24) }
-  'bool' { PT _ (TS _ 25) }
-  'drop' { PT _ (TS _ 26) }
-  'else' { PT _ (TS _ 27) }
-  'false' { PT _ (TS _ 28) }
-  'func' { PT _ (TS _ 29) }
-  'func*' { PT _ (TS _ 30) }
-  'gen' { PT _ (TS _ 31) }
+  'Generator' { PT _ (TS _ 21) }
+  '[' { PT _ (TS _ 22) }
+  '[]' { PT _ (TS _ 23) }
+  ']' { PT _ (TS _ 24) }
+  'add' { PT _ (TS _ 25) }
+  'bool' { PT _ (TS _ 26) }
+  'drop' { PT _ (TS _ 27) }
+  'else' { PT _ (TS _ 28) }
+  'false' { PT _ (TS _ 29) }
+  'func' { PT _ (TS _ 30) }
+  'func*' { PT _ (TS _ 31) }
   'if' { PT _ (TS _ 32) }
   'int' { PT _ (TS _ 33) }
   'length' { PT _ (TS _ 34) }
@@ -55,7 +55,7 @@ import ErrM
   'true' { PT _ (TS _ 40) }
   'void' { PT _ (TS _ 41) }
   'while' { PT _ (TS _ 42) }
-  'yeld' { PT _ (TS _ 43) }
+  'yield' { PT _ (TS _ 43) }
   '{' { PT _ (TS _ 44) }
   '||' { PT _ (TS _ 45) }
   '}' { PT _ (TS _ 46) }
@@ -82,7 +82,7 @@ Stmt : ';' { AbsGrammar.Empty }
      | Block { AbsGrammar.BStmt $1 }
      | Type ListItem ';' { AbsGrammar.Decl $1 $2 }
      | Ident '=' Expr ';' { AbsGrammar.Ass $1 $3 }
-     | Ident '.' Field '=' Expr ';' { AbsGrammar.StructAss $1 $3 $5 }
+     | Ident '.' ListField '=' Expr ';' { AbsGrammar.StructAss $1 $3 $5 }
      | 'return' Expr ';' { AbsGrammar.Ret $2 }
      | 'return' ';' { AbsGrammar.VRet }
      | 'if' '(' Expr ')' Block { AbsGrammar.Cond $3 $5 }
@@ -91,7 +91,7 @@ Stmt : ';' { AbsGrammar.Empty }
      | Expr ';' { AbsGrammar.SExp $1 }
      | 'func' Type Ident '(' ListArg ')' Block { AbsGrammar.Function $2 $3 $5 $7 }
      | 'func*' Type Ident '(' ListArg ')' GenBlock { AbsGrammar.GeneratorDef $2 $3 $5 $7 }
-     | 'struct' Ident '{' ListStructItem '}' { AbsGrammar.StructDef $2 $4 }
+     | 'struct' Ident '{' ListStructItem '}' { AbsGrammar.StructDef $2 (reverse $4) }
      | 'print' Expr ';' { AbsGrammar.Print $2 }
      | Ident '.' 'drop' '(' ')' ';' { AbsGrammar.ListDrop $1 }
      | Ident '.' 'add' '(' Expr ')' ';' { AbsGrammar.ListAdd $1 $5 }
@@ -111,20 +111,19 @@ GenBlock :: { GenBlock }
 GenBlock : '{' ListGenStmt '}' { AbsGrammar.GenBlock (reverse $2) }
 GenStmt :: { GenStmt }
 GenStmt : Stmt { AbsGrammar.GenStmt $1 }
-        | 'yeld' Expr ';' { AbsGrammar.Yeld $2 }
+        | 'yield' Expr ';' { AbsGrammar.Yield $2 }
 ListGenStmt :: { [GenStmt] }
 ListGenStmt : {- empty -} { [] }
             | ListGenStmt GenStmt { flip (:) $1 $2 }
 StructItem :: { StructItem }
-StructItem : Type Ident { AbsGrammar.StructItem $1 $2 }
+StructItem : Type Ident ';' { AbsGrammar.StructItem $1 $2 }
 ListStructItem :: { [StructItem] }
 ListStructItem : {- empty -} { [] }
-               | StructItem { (:[]) $1 }
-               | StructItem ';' ListStructItem { (:) $1 $3 }
+               | ListStructItem StructItem { flip (:) $1 $2 }
 Expr6 :: { Expr }
 Expr6 : Ident '.' 'length' { AbsGrammar.EListLength $1 }
       | Ident '[' Expr ']' { AbsGrammar.EListElem $1 $3 }
-      | Ident '.' Field { AbsGrammar.EStructField $1 $3 }
+      | Ident '.' ListField { AbsGrammar.EStructField $1 $3 }
       | Ident '.' 'next' '(' ')' { AbsGrammar.ENextGen $1 }
       | Ident { AbsGrammar.EVar $1 }
       | Integer { AbsGrammar.ELitInt $1 }
@@ -135,8 +134,9 @@ Expr6 : Ident '.' 'length' { AbsGrammar.EListLength $1 }
       | String { AbsGrammar.EString $1 }
       | '(' Expr ')' { $2 }
 Field :: { Field }
-Field : Ident { AbsGrammar.SingleField $1 }
-      | Ident '.' Ident { AbsGrammar.ManyFields $1 $3 }
+Field : Ident { AbsGrammar.Field $1 }
+ListField :: { [Field] }
+ListField : Field { (:[]) $1 } | Field '.' ListField { (:) $1 $3 }
 Type :: { Type }
 Type : 'int' { AbsGrammar.Int }
      | 'string' { AbsGrammar.Str }
@@ -144,7 +144,7 @@ Type : 'int' { AbsGrammar.Int }
      | 'void' { AbsGrammar.Void }
      | '[' Type ']' { AbsGrammar.List $2 }
      | 'struct' Ident { AbsGrammar.Struct $2 }
-     | 'gen' Type Ident { AbsGrammar.Generator $2 $3 }
+     | 'Generator' '<' Type '>' { AbsGrammar.Generator $3 }
 Expr5 :: { Expr }
 Expr5 : '-' Expr6 { AbsGrammar.Neg $2 }
       | '!' Expr6 { AbsGrammar.Not $2 }
