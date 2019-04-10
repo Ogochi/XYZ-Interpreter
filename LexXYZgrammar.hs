@@ -1,10 +1,10 @@
 {-# OPTIONS_GHC -fno-warn-unused-binds -fno-warn-missing-signatures #-}
 {-# LANGUAGE CPP,MagicHash #-}
-{-# LINE 3 "LexGrammar.x" #-}
+{-# LINE 3 "LexXYZgrammar.x" #-}
 
 {-# OPTIONS -fno-warn-incomplete-patterns #-}
 {-# OPTIONS_GHC -w #-}
-module LexGrammar where
+module LexXYZgrammar where
 
 
 
@@ -99,7 +99,7 @@ alex_actions = array (0 :: Int, 12)
   , (0,alex_action_6)
   ]
 
-{-# LINE 39 "LexGrammar.x" #-}
+{-# LINE 39 "LexXYZgrammar.x" #-}
 
 
 tok :: (Posn -> String -> Token) -> (Posn -> String -> Token)

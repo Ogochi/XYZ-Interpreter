@@ -1,6 +1,6 @@
 module Types where
 
-import AbsGrammar
+import AbsXYZgrammar
 
 import Data.Map as Map
 import Control.Monad.Reader

@@ -6,11 +6,11 @@ import System.IO ( stdin, hGetContents, hPutStrLn, stderr )
 import System.Environment ( getArgs, getProgName )
 import System.Exit ( exitFailure, exitSuccess )
 
-import LexGrammar
-import ParGrammar
-import SkelGrammar
-import PrintGrammar
-import AbsGrammar
+import LexXYZgrammar
+import ParXYZgrammar
+import SkelXYZgrammar
+import PrintXYZgrammar
+import AbsXYZgrammar
 
 import Types
 import Interpreter

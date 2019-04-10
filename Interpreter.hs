@@ -1,6 +1,6 @@
 module Interpreter where
 
-import AbsGrammar
+import AbsXYZgrammar
 import Types
 import Utils
 
