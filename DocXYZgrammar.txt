@@ -35,17 +35,17 @@ The reserved words used in XYZgrammar are the following:
   | ``Generator`` | ``add`` | ``bool`` | ``drop``
   | ``else`` | ``false`` | ``func`` | ``if``
   | ``int`` | ``length`` | ``next`` | ``print``
-  | ``return`` | ``string`` | ``struct`` | ``true``
-  | ``void`` | ``while`` | ``yield`` | 
+  | ``return`` | ``string`` | ``true`` | ``void``
+  | ``while`` | ``yield`` |  | 
 
 The symbols used in XYZgrammar are the following:
   | { | } | ; | =
-  | , | . | ( | )
-  | & | func* | [ | ]
-  | < | > | [] | -
-  | ! | && | || | +
-  | * | / | % | <=
-  | >= | == | != | 
+  | , | ( | ) | &
+  | func* | . | [ | ]
+  | < | > | - | !
+  | && | || | + | *
+  | / | % | <= | >=
+  | == | != |  | 
 
 ===Comments===
 Single-line comments begin with //.Multiple-line comments are  enclosed with /* and */.
@@ -64,7 +64,6 @@ All other symbols are terminals.
   |  |  **|**  | //Block// 
   |  |  **|**  | //Type// //[Item]// ``;`` 
   |  |  **|**  | //Ident// ``=`` //Expr// ``;`` 
-  |  |  **|**  | //Ident// ``.`` //[Field]// ``=`` //Expr// ``;`` 
   |  |  **|**  | ``return`` //Expr// ``;`` 
   |  |  **|**  | ``return`` ``;`` 
   |  |  **|**  | ``if`` ``(`` //Expr// ``)`` //Block// 
@@ -72,8 +71,8 @@ All other symbols are terminals.
   |  |  **|**  | ``while`` ``(`` //Expr// ``)`` //Block// 
   |  |  **|**  | //Expr// ``;`` 
   |  |  **|**  | ``func`` //Type// //Ident// ``(`` //[Arg]// ``)`` //Block// 
-  |  |  **|**  | ``func*`` //Type// //Ident// ``(`` //[Arg]// ``)`` //GenBlock// 
-  |  |  **|**  | ``struct`` //Ident// ``{`` //[StructItem]// ``}`` 
+  |  |  **|**  | ``func*`` //Type// //Ident// ``(`` //[Arg]// ``)`` //Block// 
+  |  |  **|**  | ``yield`` ``(`` //Expr// ``)`` ``;`` 
   |  |  **|**  | ``print`` ``(`` //Expr// ``)`` ``;`` 
   |  |  **|**  | //Ident// ``.`` ``drop`` ``(`` ``)`` ``;`` 
   |  |  **|**  | //Ident// ``.`` ``add`` ``(`` //Expr// ``)`` ``;`` 
@@ -86,35 +85,21 @@ All other symbols are terminals.
   | //[Arg]// | -> | **eps**
   |  |  **|**  | //Arg// 
   |  |  **|**  | //Arg// ``,`` //[Arg]// 
-  | //GenBlock// | -> | ``{`` //[GenStmt]// ``}`` 
-  | //GenStmt// | -> | //Stmt// 
-  |  |  **|**  | ``yield`` //Expr// ``;`` 
-  | //[GenStmt]// | -> | **eps**
-  |  |  **|**  | //GenStmt// //[GenStmt]// 
-  | //StructItem// | -> | //Type// //Ident// ``;`` 
-  | //[StructItem]// | -> | **eps**
-  |  |  **|**  | //StructItem// //[StructItem]// 
   | //Expr6// | -> | //Ident// ``.`` ``length`` 
   |  |  **|**  | //Ident// ``[`` //Expr// ``]`` 
-  |  |  **|**  | //Ident// ``.`` //[Field]// 
   |  |  **|**  | //Ident// ``.`` ``next`` ``(`` ``)`` 
   |  |  **|**  | //Ident// 
   |  |  **|**  | //Integer// 
-  |  |  **|**  | ``[]`` 
   |  |  **|**  | ``true`` 
   |  |  **|**  | ``false`` 
   |  |  **|**  | //Ident// ``(`` //[Expr]// ``)`` 
   |  |  **|**  | //String// 
   |  |  **|**  | ``(`` //Expr// ``)`` 
-  | //Field// | -> | //Ident// 
-  | //[Field]// | -> | //Field// 
-  |  |  **|**  | //Field// ``.`` //[Field]// 
   | //Type// | -> | ``int`` 
   |  |  **|**  | ``string`` 
   |  |  **|**  | ``bool`` 
   |  |  **|**  | ``void`` 
   |  |  **|**  | ``[`` //Type// ``]`` 
-  |  |  **|**  | ``struct`` //Ident// 
   |  |  **|**  | ``Generator`` ``<`` //Type// ``>`` 
   | //Expr5// | -> | ``-`` //Expr6// 
   |  |  **|**  | ``!`` //Expr6// 

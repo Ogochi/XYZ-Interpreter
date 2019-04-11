@@ -24,7 +24,6 @@ transStmt x = case x of
   BStmt block -> failure x
   Decl type_ items -> failure x
   Ass ident expr -> failure x
-  StructAss ident fields expr -> failure x
   Ret expr -> failure x
   VRet -> failure x
   Cond expr block -> failure x
@@ -32,8 +31,8 @@ transStmt x = case x of
   While expr block -> failure x
   SExp expr -> failure x
   Function type_ ident args block -> failure x
-  GeneratorDef type_ ident args genblock -> failure x
-  StructDef ident structitems -> failure x
+  GeneratorDef type_ ident args block -> failure x
+  Yield expr -> failure x
   Print expr -> failure x
   ListDrop ident -> failure x
   ListAdd ident expr -> failure x
@@ -45,19 +44,6 @@ transArg :: Arg -> Result
 transArg x = case x of
   ValArg type_ ident -> failure x
   RefArg type_ ident -> failure x
-transGenBlock :: GenBlock -> Result
-transGenBlock x = case x of
-  GenBlock genstmts -> failure x
-transGenStmt :: GenStmt -> Result
-transGenStmt x = case x of
-  GenStmt stmt -> failure x
-  Yield expr -> failure x
-transStructItem :: StructItem -> Result
-transStructItem x = case x of
-  StructItem type_ ident -> failure x
-transField :: Field -> Result
-transField x = case x of
-  Field ident -> failure x
 transType :: Type -> Result
 transType x = case x of
   Int -> failure x
@@ -65,17 +51,14 @@ transType x = case x of
   Bool -> failure x
   Void -> failure x
   List type_ -> failure x
-  Struct ident -> failure x
   Generator type_ -> failure x
 transExpr :: Expr -> Result
 transExpr x = case x of
   EListLength ident -> failure x
   EListElem ident expr -> failure x
-  EStructField ident fields -> failure x
   ENextGen ident -> failure x
   EVar ident -> failure x
   ELitInt integer -> failure x
-  ELitList -> failure x
   ELitTrue -> failure x
   ELitFalse -> failure x
   EApp ident exprs -> failure x

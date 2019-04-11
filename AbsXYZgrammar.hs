@@ -19,7 +19,6 @@ data Stmt
     | BStmt Block
     | Decl Type [Item]
     | Ass Ident Expr
-    | StructAss Ident [Field] Expr
     | Ret Expr
     | VRet
     | Cond Expr Block
@@ -27,8 +26,8 @@ data Stmt
     | While Expr Block
     | SExp Expr
     | Function Type Ident [Arg] Block
-    | GeneratorDef Type Ident [Arg] GenBlock
-    | StructDef Ident [StructItem]
+    | GeneratorDef Type Ident [Arg] Block
+    | Yield Expr
     | Print Expr
     | ListDrop Ident
     | ListAdd Ident Expr
@@ -40,36 +39,15 @@ data Item = NoInit Ident | Init Ident Expr
 data Arg = ValArg Type Ident | RefArg Type Ident
   deriving (Eq, Ord, Show, Read)
 
-data GenBlock = GenBlock [GenStmt]
-  deriving (Eq, Ord, Show, Read)
-
-data GenStmt = GenStmt Stmt | Yield Expr
-  deriving (Eq, Ord, Show, Read)
-
-data StructItem = StructItem Type Ident
-  deriving (Eq, Ord, Show, Read)
-
-data Field = Field Ident
-  deriving (Eq, Ord, Show, Read)
-
-data Type
-    = Int
-    | Str
-    | Bool
-    | Void
-    | List Type
-    | Struct Ident
-    | Generator Type
+data Type = Int | Str | Bool | Void | List Type | Generator Type
   deriving (Eq, Ord, Show, Read)
 
 data Expr
     = EListLength Ident
     | EListElem Ident Expr
-    | EStructField Ident [Field]
     | ENextGen Ident
     | EVar Ident
     | ELitInt Integer
-    | ELitList
     | ELitTrue
     | ELitFalse
     | EApp Ident [Expr]

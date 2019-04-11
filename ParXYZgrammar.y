@@ -35,30 +35,28 @@ import ErrM
   '>=' { PT _ (TS _ 20) }
   'Generator' { PT _ (TS _ 21) }
   '[' { PT _ (TS _ 22) }
-  '[]' { PT _ (TS _ 23) }
-  ']' { PT _ (TS _ 24) }
-  'add' { PT _ (TS _ 25) }
-  'bool' { PT _ (TS _ 26) }
-  'drop' { PT _ (TS _ 27) }
-  'else' { PT _ (TS _ 28) }
-  'false' { PT _ (TS _ 29) }
-  'func' { PT _ (TS _ 30) }
-  'func*' { PT _ (TS _ 31) }
-  'if' { PT _ (TS _ 32) }
-  'int' { PT _ (TS _ 33) }
-  'length' { PT _ (TS _ 34) }
-  'next' { PT _ (TS _ 35) }
-  'print' { PT _ (TS _ 36) }
-  'return' { PT _ (TS _ 37) }
-  'string' { PT _ (TS _ 38) }
-  'struct' { PT _ (TS _ 39) }
-  'true' { PT _ (TS _ 40) }
-  'void' { PT _ (TS _ 41) }
-  'while' { PT _ (TS _ 42) }
-  'yield' { PT _ (TS _ 43) }
-  '{' { PT _ (TS _ 44) }
-  '||' { PT _ (TS _ 45) }
-  '}' { PT _ (TS _ 46) }
+  ']' { PT _ (TS _ 23) }
+  'add' { PT _ (TS _ 24) }
+  'bool' { PT _ (TS _ 25) }
+  'drop' { PT _ (TS _ 26) }
+  'else' { PT _ (TS _ 27) }
+  'false' { PT _ (TS _ 28) }
+  'func' { PT _ (TS _ 29) }
+  'func*' { PT _ (TS _ 30) }
+  'if' { PT _ (TS _ 31) }
+  'int' { PT _ (TS _ 32) }
+  'length' { PT _ (TS _ 33) }
+  'next' { PT _ (TS _ 34) }
+  'print' { PT _ (TS _ 35) }
+  'return' { PT _ (TS _ 36) }
+  'string' { PT _ (TS _ 37) }
+  'true' { PT _ (TS _ 38) }
+  'void' { PT _ (TS _ 39) }
+  'while' { PT _ (TS _ 40) }
+  'yield' { PT _ (TS _ 41) }
+  '{' { PT _ (TS _ 42) }
+  '||' { PT _ (TS _ 43) }
+  '}' { PT _ (TS _ 44) }
 
 L_ident  { PT _ (TV $$) }
 L_integ  { PT _ (TI $$) }
@@ -82,7 +80,6 @@ Stmt : ';' { AbsXYZgrammar.Empty }
      | Block { AbsXYZgrammar.BStmt $1 }
      | Type ListItem ';' { AbsXYZgrammar.Decl $1 $2 }
      | Ident '=' Expr ';' { AbsXYZgrammar.Ass $1 $3 }
-     | Ident '.' ListField '=' Expr ';' { AbsXYZgrammar.StructAss $1 $3 $5 }
      | 'return' Expr ';' { AbsXYZgrammar.Ret $2 }
      | 'return' ';' { AbsXYZgrammar.VRet }
      | 'if' '(' Expr ')' Block { AbsXYZgrammar.Cond $3 $5 }
@@ -90,8 +87,8 @@ Stmt : ';' { AbsXYZgrammar.Empty }
      | 'while' '(' Expr ')' Block { AbsXYZgrammar.While $3 $5 }
      | Expr ';' { AbsXYZgrammar.SExp $1 }
      | 'func' Type Ident '(' ListArg ')' Block { AbsXYZgrammar.Function $2 $3 $5 $7 }
-     | 'func*' Type Ident '(' ListArg ')' GenBlock { AbsXYZgrammar.GeneratorDef $2 $3 $5 $7 }
-     | 'struct' Ident '{' ListStructItem '}' { AbsXYZgrammar.StructDef $2 (reverse $4) }
+     | 'func*' Type Ident '(' ListArg ')' Block { AbsXYZgrammar.GeneratorDef $2 $3 $5 $7 }
+     | 'yield' '(' Expr ')' ';' { AbsXYZgrammar.Yield $3 }
      | 'print' '(' Expr ')' ';' { AbsXYZgrammar.Print $3 }
      | Ident '.' 'drop' '(' ')' ';' { AbsXYZgrammar.ListDrop $1 }
      | Ident '.' 'add' '(' Expr ')' ';' { AbsXYZgrammar.ListAdd $1 $5 }
@@ -107,43 +104,23 @@ ListArg :: { [Arg] }
 ListArg : {- empty -} { [] }
         | Arg { (:[]) $1 }
         | Arg ',' ListArg { (:) $1 $3 }
-GenBlock :: { GenBlock }
-GenBlock : '{' ListGenStmt '}' { AbsXYZgrammar.GenBlock (reverse $2) }
-GenStmt :: { GenStmt }
-GenStmt : Stmt { AbsXYZgrammar.GenStmt $1 }
-        | 'yield' Expr ';' { AbsXYZgrammar.Yield $2 }
-ListGenStmt :: { [GenStmt] }
-ListGenStmt : {- empty -} { [] }
-            | ListGenStmt GenStmt { flip (:) $1 $2 }
-StructItem :: { StructItem }
-StructItem : Type Ident ';' { AbsXYZgrammar.StructItem $1 $2 }
-ListStructItem :: { [StructItem] }
-ListStructItem : {- empty -} { [] }
-               | ListStructItem StructItem { flip (:) $1 $2 }
 Expr6 :: { Expr }
 Expr6 : Ident '.' 'length' { AbsXYZgrammar.EListLength $1 }
       | Ident '[' Expr ']' { AbsXYZgrammar.EListElem $1 $3 }
-      | Ident '.' ListField { AbsXYZgrammar.EStructField $1 $3 }
       | Ident '.' 'next' '(' ')' { AbsXYZgrammar.ENextGen $1 }
       | Ident { AbsXYZgrammar.EVar $1 }
       | Integer { AbsXYZgrammar.ELitInt $1 }
-      | '[]' { AbsXYZgrammar.ELitList }
       | 'true' { AbsXYZgrammar.ELitTrue }
       | 'false' { AbsXYZgrammar.ELitFalse }
       | Ident '(' ListExpr ')' { AbsXYZgrammar.EApp $1 $3 }
       | String { AbsXYZgrammar.EString $1 }
       | '(' Expr ')' { $2 }
-Field :: { Field }
-Field : Ident { AbsXYZgrammar.Field $1 }
-ListField :: { [Field] }
-ListField : Field { (:[]) $1 } | Field '.' ListField { (:) $1 $3 }
 Type :: { Type }
 Type : 'int' { AbsXYZgrammar.Int }
      | 'string' { AbsXYZgrammar.Str }
      | 'bool' { AbsXYZgrammar.Bool }
      | 'void' { AbsXYZgrammar.Void }
      | '[' Type ']' { AbsXYZgrammar.List $2 }
-     | 'struct' Ident { AbsXYZgrammar.Struct $2 }
      | 'Generator' '<' Type '>' { AbsXYZgrammar.Generator $3 }
 Expr5 :: { Expr }
 Expr5 : '-' Expr6 { AbsXYZgrammar.Neg $2 }

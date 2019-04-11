@@ -16,7 +16,6 @@ Init.      Item ::= Ident "=" Expr ;
 separator nonempty Item "," ;
 
 Ass.       Stmt ::= Ident "=" Expr  ";" ;
-StructAss. Stmt ::= Ident "." [Field] "=" Expr ";" ;
 Ret.       Stmt ::= "return" Expr ";" ;
 VRet.      Stmt ::= "return" ";" ;
 Cond.      Stmt ::= "if" "(" Expr ")" Block  ;
@@ -29,15 +28,8 @@ ValArg.    Arg ::= Type Ident ;
 RefArg.    Arg ::= Type "&" Ident ;
 separator  Arg "," ;
 
-GeneratorDef. Stmt ::= "func*" Type Ident "(" [Arg] ")" GenBlock ;
-GenBlock.  GenBlock ::= "{" [GenStmt] "}" ;
-GenStmt.   GenStmt ::= Stmt ;
-separator  GenStmt "" ;
-Yield.     GenStmt ::= "yield" Expr ";" ;
-
-StructDef. Stmt ::= "struct" Ident "{" [StructItem] "}" ;
-StructItem. StructItem ::= Type Ident ";" ;
-separator   StructItem "" ;
+GeneratorDef. Stmt ::= "func*" Type Ident "(" [Arg] ")" Block ;
+Yield.        Stmt ::= "yield" "(" Expr ")" ";" ;
 
 -- Operations ----------------------------------------------
 
@@ -48,10 +40,6 @@ ListAdd.  Stmt ::= Ident "." "add" "(" Expr ")" ";" ;
 EListLength. Expr6 ::= Ident "." "length" ;
 EListElem.   Expr6 ::= Ident "[" Expr "]" ;
 
-EStructField. Expr6 ::= Ident "." [Field] ;
-Field. Field ::= Ident ;
-separator nonempty Field "." ;
-
 ENextGen. Expr6 ::= Ident "." "next" "(" ")" ;
 
 -- Types ---------------------------------------------------
@@ -61,14 +49,12 @@ Str.       Type ::= "string" ;
 Bool.      Type ::= "bool" ;
 Void.      Type ::= "void" ;
 List.      Type ::= "[" Type "]" ;
-Struct.    Type ::= "struct" Ident ;
 Generator. Type ::= "Generator" "<" Type ">" ;
 
 -- Expressions ---------------------------------------------
 
 EVar.      Expr6 ::= Ident ;
 ELitInt.   Expr6 ::= Integer ;
-ELitList.  Expr6 ::= "[]" ;
 ELitTrue.  Expr6 ::= "true" ;
 ELitFalse. Expr6 ::= "false" ;
 EApp.      Expr6 ::= Ident "(" [Expr] ")" ;
