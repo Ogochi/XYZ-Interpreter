@@ -29,4 +29,4 @@ type PStateMonad = ReaderT Env (StateT PState (ExceptT RuntimeException IO))
 instance Show Memory where
   show (IntVar i) = show i
   show (BoolVar b) = show b
-  show (StringVar s) = show s
+  show (StringVar s) = s
