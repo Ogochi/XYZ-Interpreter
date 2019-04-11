@@ -34,81 +34,96 @@ execStmt (BStmt (Block stmts)) = do
   return result
 
 -- Print
-execStmt (Print exp) = evalExp exp >>= liftIO . putStr . show . fromJust >> return Nothing
+execStmt (Print exp) = evalExp exp >>= liftIO . putStr . show >> return Nothing
+
+-- Decl
+execStmt (Decl declType (item:rest)) = do
+  addDecl declType item
+  result <- execStmt (Decl declType rest)
+  return result
+execStmt (Decl _ []) = return Nothing
 
 -- SExp
 execStmt (SExp exp) = do
-  Just result <- evalExp exp
+  result <- evalExp exp
   mode <- getInterpreterMode
   case mode of
     StdinMode -> liftIO . putStr . show $ result
 
   return Nothing
 
-evalExp :: Expr -> PStateMonad ReturnResult
+addDecl :: Type -> Item -> PStateMonad ReturnResult
+addDecl _ (Init ident exp) = do
+  expVal <- evalExp exp
+  addVar ident expVal
+  return Nothing
 
-evalExp (ELitInt num) = return $ Just (IntVar num)
-evalExp ELitTrue = return $ Just (BoolVar True)
-evalExp ELitFalse = return $ Just (BoolVar False)
-evalExp (EString s) = return $ Just (StringVar s)
+evalExp :: Expr -> PStateMonad Memory
+
+evalExp (EVar ident) = getVar ident;
+
+evalExp (ELitInt num) = return $ IntVar num
+evalExp ELitTrue = return $ BoolVar True
+evalExp ELitFalse = return $ BoolVar False
+evalExp (EString s) = return $ StringVar s
 
 evalExp (EAdd exp1 addOp exp2) = do
-  Just res1 <- evalExp exp1
-  Just res2 <- evalExp exp2
-  return $ Just (makeAddOp addOp res1 res2)
+  res1 <- evalExp exp1
+  res2 <- evalExp exp2
+  return $ makeAddOp addOp res1 res2
 
 evalExp (EMul exp1 mulOp exp2) = do
-  Just res1 <- evalExp exp1
-  Just res2 <- evalExp exp2
+  res1 <- evalExp exp1
+  res2 <- evalExp exp2
   result <- makeMulOp mulOp res1 res2
   return result
 
 evalExp (ERel exp1 relOp exp2) = do
-  Just res1 <- evalExp exp1
-  Just res2 <- evalExp exp2
-  return $ Just $ BoolVar (makeRelOp relOp res1 res2)
+  res1 <- evalExp exp1
+  res2 <- evalExp exp2
+  return $ BoolVar (makeRelOp relOp res1 res2)
 
 evalExp (EAnd exp1 exp2) = do
-  Just (BoolVar res1) <- evalExp exp1
+  BoolVar res1 <- evalExp exp1
   if res1 then do
     res2 <- evalExp exp2
     return res2
   else
-    return $ Just (BoolVar False)
+    return $ BoolVar False
 
 evalExp (EOr exp1 exp2) = do
-  Just (BoolVar res1) <- evalExp exp1
+  BoolVar res1 <- evalExp exp1
   if res1 then
-    return $ Just (BoolVar True)
+    return $ BoolVar True
   else do
     res2 <- evalExp exp2
     return res2
 
 evalExp (Not exp) = do
-  Just (BoolVar res) <- evalExp exp
-  return $ Just $ BoolVar $ not res
+  BoolVar res <- evalExp exp
+  return $ BoolVar $ not res
 
 evalExp (Neg exp) = do
-  Just (IntVar res) <- evalExp exp
-  return $ Just $ IntVar $ -res
+  IntVar res <- evalExp exp
+  return $ IntVar $ -res
 
 makeAddOp :: AddOp -> Memory -> Memory -> Memory
 makeAddOp Plus (StringVar s1) (StringVar s2) = StringVar $ s1 ++ s2
 makeAddOp Plus (IntVar i1) (IntVar i2) = IntVar $ i1 + i2
 makeAddOp Minus (IntVar i1) (IntVar i2) = IntVar $ i1 - i2
 
-makeMulOp :: MulOp -> Memory -> Memory -> PStateMonad ReturnResult
-makeMulOp Times (IntVar i1) (IntVar i2) = return $ Just $ IntVar $ i1 * i2
+makeMulOp :: MulOp -> Memory -> Memory -> PStateMonad Memory
+makeMulOp Times (IntVar i1) (IntVar i2) = return $ IntVar $ i1 * i2
 makeMulOp Mod (IntVar i1) (IntVar i2) = do
   if i2 == 0 then
     throwError ZeroModException
   else
-    return $ Just $ IntVar $ i1 `mod` i2
+    return $ IntVar $ i1 `mod` i2
 makeMulOp Div (IntVar i1) (IntVar i2) = do
   if i2 == 0 then
     throwError ZeroDivException
   else
-    return $ Just $ IntVar $ quot i1 i2
+    return $ IntVar $ quot i1 i2
 
 makeRelOp :: RelOp -> Memory -> Memory -> Bool
 makeRelOp EQU val1 val2 = val1 == val2

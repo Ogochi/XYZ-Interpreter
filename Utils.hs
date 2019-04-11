@@ -16,14 +16,14 @@ getInterpreterMode = do
   (_, _, mode) <- get
   return mode
 
-getNewLocation :: PStateMonad Location
-getNewLocation = do
-  (mem, location, mode) <- get
-  put (mem, location + 1, mode)
-  return location
-
 getVar :: Ident -> PStateMonad Memory
 getVar (Ident s) = do
   Just location <- asks $ lookup s
   (mem, _, _) <- get
   return $ fromJust $ lookup location mem
+
+addVar :: Ident -> Memory -> PStateMonad ReturnResult
+addVar (Ident s) val = do
+  (mem, newLoc, mode) <- get
+  put (insert newLoc val mem, newLoc + 1, mode)
+  return Nothing
