@@ -22,6 +22,13 @@ getVar (Ident s) = do
   (mem, _, _) <- get
   return $ fromJust $ lookup location mem
 
+setVar :: Ident -> Memory -> PStateMonad Result
+setVar (Ident s) val = do
+  Just loc <- asks $ lookup s
+  (mem, newLoc, mode) <- get
+  put (insert loc val mem, newLoc, mode)
+  justReturn
+
 addVar :: Ident -> Memory -> PStateMonad Result
 addVar (Ident s) val = do
   env <- ask

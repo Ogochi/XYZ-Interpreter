@@ -57,6 +57,9 @@ execStmt (While exp block) = do
   else
     justReturn
 
+-- Ass
+execStmt (Ass ident exp) = evalExp exp >>= setVar ident >>= return
+
 -- Decl
 execStmt (Decl declType (item:rest)) = do
   (_, env ) <- addDecl declType item
