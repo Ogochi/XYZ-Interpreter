@@ -38,6 +38,7 @@ run mode s = let ts = myLLexer s in case pProgram ts of
 
                               case exception of
                                 ZeroDivException -> hPutStrLn stderr "Dividing by 0 is forbidden."
+                                ZeroModException -> hPutStrLn stderr "Modulo by 0 is forbidden."
                               exitFailure
 
                             Right _ -> do exitSuccess
