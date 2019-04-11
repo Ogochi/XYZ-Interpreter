@@ -1,0 +1,18 @@
+int i = 0, y, x = 5;
+bool a = false;
+string txt = "EXAMPLE";
+
+if (a) {
+  print(x + y);
+} else {
+  int i = 5;
+
+  while (i > 0) {
+    print(i);
+    print(" ");
+
+    i = i - 1;
+  }
+}
+
+print(txt + "\n");

@@ -1,0 +1,17 @@
+[int] list;
+
+list.add(5);
+list.add(10);
+print(list.length + list[1]);
+list.drop();
+
+int x = 3;
+func void myFunc(int &g) {
+  g = g + 1;
+}
+
+myFunc(x);
+
+if (x == 3 + 1) {
+  print("CORRECT\n");
+}

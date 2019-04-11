@@ -1,0 +1,28 @@
+func* int myGenerator(int start, int end) {
+  while (start <= end) {
+    yield(start);
+    start = start + 1;
+  }
+}
+
+Generator<int> generatorInstance = myGenerator(1, 5);
+
+func string myFunction(int a, int b) {
+  print(generatorInstance.next());
+
+  int i = 2;
+  func int xxx() {
+    i = i - 1;
+
+    if (i >= 0) {
+      return xxx();
+    }
+    return 5;
+  }
+  print(xxx());
+
+  return "myFunction\n";
+}
+
+myFunction(1, 2);
+myFunction(1, 2);
