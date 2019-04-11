@@ -24,9 +24,10 @@ getVar (Ident s) = do
 
 addVar :: Ident -> Memory -> PStateMonad Result
 addVar (Ident s) val = do
+  env <- ask
   (mem, newLoc, mode) <- get
   put (insert newLoc val mem, newLoc + 1, mode)
-  justReturn
+  return (Nothing, insert s newLoc env)
 
 justReturn :: PStateMonad Result
 justReturn = do

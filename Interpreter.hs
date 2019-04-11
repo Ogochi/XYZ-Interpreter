@@ -19,7 +19,7 @@ interpretStmts (x:rest) = do
   if isJust result then
     return (result, env)
   else do
-    restResult <- interpretStmts rest
+    restResult <- local (const env) (interpretStmts rest)
     return restResult
 interpretStmts [] = justReturn
 
@@ -38,8 +38,8 @@ execStmt (Print exp) = evalExp exp >>= liftIO . putStr . show >> justReturn
 
 -- Decl
 execStmt (Decl declType (item:rest)) = do
-  addDecl declType item
-  result <- execStmt (Decl declType rest)
+  (_, env ) <- addDecl declType item
+  result <- local (const env) $ execStmt (Decl declType rest)
   return result
 execStmt (Decl _ []) = justReturn
 
@@ -55,8 +55,16 @@ execStmt (SExp exp) = do
 addDecl :: Type -> Item -> PStateMonad Result
 addDecl _ (Init ident exp) = do
   expVal <- evalExp exp
-  addVar ident expVal
-  justReturn
+  result <- addVar ident expVal
+  return result
+addDecl declType (NoInit ident) = do
+  let value = case declType of
+                Int -> ELitInt 0
+                Str -> EString ""
+                Bool -> ELitFalse
+  result <- addDecl declType (Init ident value)
+  return result
+
 
 evalExp :: Expr -> PStateMonad Memory
 
