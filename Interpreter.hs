@@ -41,12 +41,21 @@ execStmt (Cond exp block) = execStmt $ CondElse exp block (Block [])
 
 execStmt (CondElse exp b1 b2) = do
   BoolVar expVal <- evalExp exp
+  result <- execStmt $ BStmt $ if expVal then b1 else b2
+  return result
+
+-- While
+execStmt (While exp block) = do
+  BoolVar expVal <- evalExp exp
   if expVal then do
-    result <- execStmt $ BStmt b1
-    return result
-  else do
-    result <- execStmt $ BStmt b2
-    return result
+    result@(mem, env) <- execStmt $ BStmt block
+    if isJust mem then
+      return result
+    else do
+      result2 <- execStmt $ While exp block
+      return result2
+  else
+    justReturn
 
 -- Decl
 execStmt (Decl declType (item:rest)) = do
