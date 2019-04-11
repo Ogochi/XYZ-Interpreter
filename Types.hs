@@ -14,7 +14,7 @@ type Location = Integer
 
 type Env = Map IdentString Location
 
-data Memory = IntVar Integer | BoolVar Bool | StringVar String deriving (Show, Eq)
+data Memory = IntVar Integer | BoolVar Bool | StringVar String deriving Eq
 type PState = (Map Location Memory, Location, Mode)
 
 data RuntimeException = ZeroDivException | ZeroModException
@@ -24,3 +24,9 @@ type Result = (Maybe Memory, Env)
 
 -- Main monad holds env and state using Exception
 type PStateMonad = ReaderT Env (StateT PState (ExceptT RuntimeException IO))
+
+-- Show for Memory
+instance Show Memory where
+  show (IntVar i) = show i
+  show (BoolVar b) = show b
+  show (StringVar s) = show s
