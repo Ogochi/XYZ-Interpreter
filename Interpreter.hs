@@ -36,6 +36,18 @@ execStmt (BStmt (Block stmts)) = do
 -- Print
 execStmt (Print exp) = evalExp exp >>= liftIO . putStr . show >> justReturn
 
+-- If
+execStmt (Cond exp block) = execStmt $ CondElse exp block (Block [])
+
+execStmt (CondElse exp b1 b2) = do
+  BoolVar expVal <- evalExp exp
+  if expVal then do
+    result <- execStmt $ BStmt b1
+    return result
+  else do
+    result <- execStmt $ BStmt b2
+    return result
+
 -- Decl
 execStmt (Decl declType (item:rest)) = do
   (_, env ) <- addDecl declType item
