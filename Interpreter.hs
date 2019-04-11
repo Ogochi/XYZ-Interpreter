@@ -10,23 +10,23 @@ import Control.Monad.Reader
 import Control.Monad.State
 import Control.Monad.Except
 
-runInterpret :: [Stmt] -> Mode -> IO (Either RuntimeException ReturnResult)
+runInterpret :: [Stmt] -> Mode -> IO (Either RuntimeException Result)
 runInterpret tree mode = runExceptT $ evalStateT (runReaderT (interpretStmts tree) Map.empty) (Map.empty, 0, mode)
 
-interpretStmts :: [Stmt] -> PStateMonad ReturnResult
+interpretStmts :: [Stmt] -> PStateMonad Result
 interpretStmts (x:rest) = do
-  result <- execStmt x
+  (result, env) <- execStmt x
   if isJust result then
-    return result
+    return (result, env)
   else do
     restResult <- interpretStmts rest
     return restResult
-interpretStmts [] = return Nothing
+interpretStmts [] = justReturn
 
-execStmt :: Stmt -> PStateMonad ReturnResult
+execStmt :: Stmt -> PStateMonad Result
 
 -- Empty
-execStmt Empty = return Nothing
+execStmt Empty = justReturn
 
 -- Block
 execStmt (BStmt (Block stmts)) = do
@@ -34,14 +34,14 @@ execStmt (BStmt (Block stmts)) = do
   return result
 
 -- Print
-execStmt (Print exp) = evalExp exp >>= liftIO . putStr . show >> return Nothing
+execStmt (Print exp) = evalExp exp >>= liftIO . putStr . show >> justReturn
 
 -- Decl
 execStmt (Decl declType (item:rest)) = do
   addDecl declType item
   result <- execStmt (Decl declType rest)
   return result
-execStmt (Decl _ []) = return Nothing
+execStmt (Decl _ []) = justReturn
 
 -- SExp
 execStmt (SExp exp) = do
@@ -50,13 +50,13 @@ execStmt (SExp exp) = do
   case mode of
     StdinMode -> liftIO . putStr . show $ result
 
-  return Nothing
+  justReturn
 
-addDecl :: Type -> Item -> PStateMonad ReturnResult
+addDecl :: Type -> Item -> PStateMonad Result
 addDecl _ (Init ident exp) = do
   expVal <- evalExp exp
   addVar ident expVal
-  return Nothing
+  justReturn
 
 evalExp :: Expr -> PStateMonad Memory
 
