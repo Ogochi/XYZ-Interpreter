@@ -1,7 +1,7 @@
 # Language XYZ
 
 Project includes implementation of interpreter for custom language programming **XYZ**.
-Interpreter is written in purely **haskell**.
+Interpreter is written purely in **haskell**.
 Grammar of the language is presented in file `XYZgrammar.cf` in BNF format.
 It allowed me to use [**BNFC**](https://bnfc.digitalgrammars.com/) to generate
 easily parser and simple docs.
