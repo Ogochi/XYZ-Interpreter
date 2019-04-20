@@ -15,6 +15,7 @@ runInterpret :: [Stmt] -> Mode -> IO (Either RuntimeException Result)
 runInterpret tree mode = runExceptT $ evalStateT (runReaderT (interpretStmts tree) Map.empty) (Map.empty, 0, mode)
 
 interpretStmts :: [Stmt] -> PStateMonad Result
+interpretStmts (VRet:_) = justReturn
 interpretStmts (x:rest) = do
   (result, env) <- execStmt x
   if isJust result then
@@ -65,6 +66,8 @@ execStmt (While exp block) = do
       return result2
   else
     justReturn
+
+-- Continue
 
 -- Ass
 execStmt (Ass ident exp) = evalExp exp >>= setVar ident >>= return
