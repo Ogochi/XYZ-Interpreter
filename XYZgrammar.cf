@@ -29,7 +29,7 @@ RefArg.    Arg ::= Type "&" Ident ;
 separator  Arg "," ;
 
 GeneratorDef. Stmt ::= "func*" Type Ident "(" [Arg] ")" Block ;
-Yield.        Stmt ::= "yield" "(" Expr ")" ";" ;
+Yield.        Stmt ::= "yield" Expr ";" ;
 
 -- Operations ----------------------------------------------
 

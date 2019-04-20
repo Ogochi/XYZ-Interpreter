@@ -88,7 +88,7 @@ Stmt : ';' { AbsXYZgrammar.Empty }
      | Expr ';' { AbsXYZgrammar.SExp $1 }
      | 'func' Type Ident '(' ListArg ')' Block { AbsXYZgrammar.Function $2 $3 $5 $7 }
      | 'func*' Type Ident '(' ListArg ')' Block { AbsXYZgrammar.GeneratorDef $2 $3 $5 $7 }
-     | 'yield' '(' Expr ')' ';' { AbsXYZgrammar.Yield $3 }
+     | 'yield' Expr ';' { AbsXYZgrammar.Yield $2 }
      | 'print' '(' Expr ')' ';' { AbsXYZgrammar.Print $3 }
      | Ident '.' 'drop' '(' ')' ';' { AbsXYZgrammar.ListDrop $1 }
      | Ident '.' 'add' '(' Expr ')' ';' { AbsXYZgrammar.ListAdd $1 $5 }

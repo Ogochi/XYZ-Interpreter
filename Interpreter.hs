@@ -79,11 +79,6 @@ execStmt (Decl declType (item:rest)) = do
   return result
 execStmt (Decl _ []) = justReturn
 
--- Function
-execStmt (Function returnType ident args (Block stmts)) = do
-  (_, env) <- addFunc ident (returnType, args, stmts)
-  return (Nothing, env)
-
 -- SExp
 execStmt (SExp exp) = do
   result <- evalExp exp
@@ -92,6 +87,11 @@ execStmt (SExp exp) = do
     StdinMode -> liftIO . putStr . show $ result
 
   justReturn
+
+-- Function
+execStmt (Function returnType ident args (Block stmts)) = do
+  (_, env) <- addFunc ident (returnType, args, stmts)
+  return (Nothing, env)
 
 addDecl :: Type -> Item -> PStateMonad Result
 addDecl _ (Init ident exp) = do
@@ -124,6 +124,8 @@ addArgToEnv env (RefArg argType (Ident ident)) (EVar (Ident s)) = do
   Just location <- asks $ lookup s
   return $ insert ident location env
 addArgToEnv env (RefArg argType ident) _ = throwError WrongRefArgException
+
+-- Expressions
 
 evalExp :: Expr -> PStateMonad Memory
 
