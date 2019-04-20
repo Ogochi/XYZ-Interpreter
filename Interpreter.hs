@@ -68,8 +68,8 @@ execStmt (Decl declType (item:rest)) = do
 execStmt (Decl _ []) = justReturn
 
 -- Function
-execStmt (Function returnType ident args block) = do
-  (_, env) <- addFunc ident (args, block)
+execStmt (Function returnType ident args (Block stmts)) = do
+  (_, env) <- addFunc ident (returnType, args, stmts)
   return (Nothing, env)
 
 -- SExp
@@ -95,9 +95,35 @@ addDecl declType (NoInit ident) = do
   return result
 
 
+initFuncArgs :: Env -> [Arg] -> [Expr] -> PStateMonad Env
+initFuncArgs env (arg:rest1) (exp:rest2) = do
+  env <- addArgToEnv env arg exp
+
+  result <- initFuncArgs env rest1 rest2
+  return result
+initFuncArgs env [] [] = return env
+
+-- TODO impl chaning env with args
+addArgToEnv :: Env -> Arg -> Expr -> PStateMonad Env
+addArgToEnv env (ValArg argType ident) exp = return env
+addArgToEnv env (RefArg argType ident) (EVar varIdent) = return env
+addArgToEnv env (RefArg argType ident) _ = throwError WrongRefArgException
+
 evalExp :: Expr -> PStateMonad Memory
 
-evalExp (EVar ident) = getVar ident;
+evalExp (EApp ident exps) = do
+  env <- get
+  FuncDef (returnType, args, stmts, env) <- getVar ident
+  newEnv <- initFuncArgs env args exps
+
+  (result, _) <- local (const newEnv) $ interpretStmts stmts
+  case result of
+    Nothing -> if isVoid returnType
+               then return $ StringVar ""
+               else throwError NoReturnStmtException
+    Just resultValue -> return resultValue
+
+evalExp (EVar ident) = getVar ident
 
 evalExp (ELitInt num) = return $ IntVar num
 evalExp ELitTrue = return $ BoolVar True

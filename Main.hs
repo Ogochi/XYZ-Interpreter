@@ -39,6 +39,8 @@ run mode s = let ts = myLLexer s in case pProgram ts of
                               case exception of
                                 ZeroDivException -> hPutStrLn stderr "Dividing by 0 is forbidden."
                                 ZeroModException -> hPutStrLn stderr "Modulo by 0 is forbidden."
+                                NoReturnStmtException -> hPutStrLn stderr "Function should end with return statement"
+                                WrongRefArgException -> hPutStrLn stderr "Function argument by reference shoulde be variable"
                               exitFailure
 
                             Right _ -> do exitSuccess

@@ -18,12 +18,16 @@ data Memory =
     IntVar Integer
   | BoolVar Bool
   | StringVar String
-  | FuncDef ([Arg], Block, Env)
+  | FuncDef (Type, [Arg], [Stmt], Env)
   deriving Eq
 
 type PState = (Map Location Memory, Location, Mode)
 
-data RuntimeException = ZeroDivException | ZeroModException
+data RuntimeException =
+    ZeroDivException
+  | ZeroModException
+  | NoReturnStmtException
+  | WrongRefArgException
 
 -- (mem value we need to pass ex. with return, next env)
 type Result = (Maybe Memory, Env)
