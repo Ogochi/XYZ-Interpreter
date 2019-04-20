@@ -67,6 +67,11 @@ execStmt (Decl declType (item:rest)) = do
   return result
 execStmt (Decl _ []) = justReturn
 
+-- Function
+execStmt (Function returnType ident args block) = do
+  (_, env) <- addFunc ident (args, block)
+  return (Nothing, env)
+
 -- SExp
 execStmt (SExp exp) = do
   result <- evalExp exp

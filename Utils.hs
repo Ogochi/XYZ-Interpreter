@@ -36,6 +36,16 @@ addVar (Ident s) val = do
   put (insert newLoc val mem, newLoc + 1, mode)
   return (Nothing, insert s newLoc env)
 
+addFunc :: Ident -> ([Arg], Block) -> PStateMonad Result
+addFunc (Ident s) (args, block) = do
+  env <- ask
+  (mem, newLoc, mode) <- get
+  let newEnv = insert s newLoc env
+
+  put (insert newLoc (FuncDef (args, block, newEnv)) mem, newLoc + 1, mode)
+  return (Nothing, newEnv)
+
+
 justReturn :: PStateMonad Result
 justReturn = do
   env <- ask

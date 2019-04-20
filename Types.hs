@@ -14,7 +14,13 @@ type Location = Integer
 
 type Env = Map IdentString Location
 
-data Memory = IntVar Integer | BoolVar Bool | StringVar String deriving Eq
+data Memory =
+    IntVar Integer
+  | BoolVar Bool
+  | StringVar String
+  | FuncDef ([Arg], Block, Env)
+  deriving Eq
+
 type PState = (Map Location Memory, Location, Mode)
 
 data RuntimeException = ZeroDivException | ZeroModException
