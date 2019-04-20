@@ -14,6 +14,7 @@ import AbsXYZgrammar
 
 import Types
 import Interpreter
+import StaticCheck
 
 import ErrM
 
@@ -30,20 +31,29 @@ run mode s = let ts = myLLexer s in case pProgram ts of
                           hPutStrLn stderr "\nParse failed...\n"
                           exitFailure
            Ok  (Program tree) -> do
-                          result <- runInterpret tree mode
+                          checkResult <- runStaticCheck tree
 
-                          case result of
+                          case checkResult of
                             Left exception -> do
-                              hPutStrLn stderr "There was a runtime exception\n"
+                              hPutStrLn stderr "There was a static check exception\n"
 
                               case exception of
-                                ZeroDivException -> hPutStrLn stderr "Dividing by 0 is forbidden."
-                                ZeroModException -> hPutStrLn stderr "Modulo by 0 is forbidden."
-                                NoReturnStmtException -> hPutStrLn stderr "Function should end with return statement"
-                                WrongRefArgException -> hPutStrLn stderr "Function argument by reference shoulde be variable"
+                                WrongTypeException -> hPutStrLn stderr "Mismatched types."
                               exitFailure
+                            Right _ -> do
+                              result <- runInterpret tree mode
 
-                            Right _ -> do exitSuccess
+                              case result of
+                                Left exception -> do
+                                  hPutStrLn stderr "There was a runtime exception\n"
+
+                                  case exception of
+                                    ZeroDivException -> hPutStrLn stderr "Dividing by 0 is forbidden."
+                                    ZeroModException -> hPutStrLn stderr "Modulo by 0 is forbidden."
+                                    NoReturnStmtException -> hPutStrLn stderr "Function should end with return statement"
+                                    WrongRefArgException -> hPutStrLn stderr "Function argument by reference shoulde be variable"
+                                  exitFailure
+                                Right _ -> do exitSuccess
 
 
 usage :: IO ()

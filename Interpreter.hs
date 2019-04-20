@@ -67,8 +67,6 @@ execStmt (While exp block) = do
   else
     justReturn
 
--- Continue
-
 -- Ass
 execStmt (Ass ident exp) = evalExp exp >>= setVar ident >>= return
 
