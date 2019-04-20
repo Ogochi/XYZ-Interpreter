@@ -29,12 +29,17 @@ setVar (Ident s) val = do
   put (insert loc val mem, newLoc, mode)
   justReturn
 
-addVar :: Ident -> Memory -> PStateMonad Result
-addVar (Ident s) val = do
-  env <- ask
+addVarToEnv :: Env -> Ident -> Memory -> PStateMonad Result
+addVarToEnv env (Ident s) val = do
   (mem, newLoc, mode) <- get
   put (insert newLoc val mem, newLoc + 1, mode)
   return (Nothing, insert s newLoc env)
+
+addVar :: Ident -> Memory -> PStateMonad Result
+addVar ident val = do
+  env <- ask
+  result <- addVarToEnv env ident val
+  return result
 
 addFunc :: Ident -> (Type, [Arg], [Stmt]) -> PStateMonad Result
 addFunc (Ident s) (returnType, args, stmts) = do

@@ -6,6 +6,7 @@ import Utils
 
 import Data.Map as Map
 import Data.Maybe
+import Prelude hiding(lookup)
 import Control.Monad.Reader
 import Control.Monad.State
 import Control.Monad.Except
@@ -24,6 +25,14 @@ interpretStmts (x:rest) = do
 interpretStmts [] = justReturn
 
 execStmt :: Stmt -> PStateMonad Result
+
+-- Return
+execStmt VRet = justReturn
+
+execStmt (Ret exp) = do
+  env <- ask
+  expResult <- evalExp exp
+  return (Just expResult, env)
 
 -- Empty
 execStmt Empty = justReturn
@@ -96,23 +105,26 @@ addDecl declType (NoInit ident) = do
 
 
 initFuncArgs :: Env -> [Arg] -> [Expr] -> PStateMonad Env
-initFuncArgs env (arg:rest1) (exp:rest2) = do
-  env <- addArgToEnv env arg exp
+initFuncArgs funcEnv (arg:rest1) (exp:rest2) = do
+  env <- addArgToEnv funcEnv arg exp
 
   result <- initFuncArgs env rest1 rest2
   return result
 initFuncArgs env [] [] = return env
 
--- TODO impl chaning env with args
 addArgToEnv :: Env -> Arg -> Expr -> PStateMonad Env
-addArgToEnv env (ValArg argType ident) exp = return env
-addArgToEnv env (RefArg argType ident) (EVar varIdent) = return env
+addArgToEnv env (ValArg argType ident) exp = do
+  expResult <- evalExp exp
+  (_, env) <- addVarToEnv env ident expResult
+  return env
+addArgToEnv env (RefArg argType (Ident ident)) (EVar (Ident s)) = do
+  Just location <- asks $ lookup s
+  return $ insert ident location env
 addArgToEnv env (RefArg argType ident) _ = throwError WrongRefArgException
 
 evalExp :: Expr -> PStateMonad Memory
 
 evalExp (EApp ident exps) = do
-  env <- get
   FuncDef (returnType, args, stmts, env) <- getVar ident
   newEnv <- initFuncArgs env args exps
 
