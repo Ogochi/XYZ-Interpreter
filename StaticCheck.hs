@@ -44,11 +44,14 @@ checkStmt (Decl declType (item:rest)) = do
   return restResult
 
 -- Ass
--- checkStmt (Ass (Ident s) exp) = do
---   expType <- checkExp exp
---   variable <- asks $ lookup s
---   case variable of
---     Nothing -> throwError $ UndefinedException
+checkStmt (Ass ident exp) = do
+  expType <- checkExp exp
+  mem <- getMemory ident
+  case mem of
+    Func _ -> throwError $ WrongTypeException "Couldn't assign value to function."
+    Var varType -> if varType == expType
+      then return Nothing
+      else throwError $ WrongTypeException "Assignment value type different from variable type."
 
 checkDeclItem :: Type -> Item -> StaticCheckMonad (Maybe StaticCheckEnv)
 checkDeclItem itemType (NoInit (Ident s)) = do
@@ -59,7 +62,7 @@ checkDeclItem itemType (Init ident exp) = do
   expType <- checkExp exp
   if expType == itemType
     then checkDeclItem itemType (NoInit ident)
-    else throwError $ WrongTypeException "Initialization type different from variable type."
+    else throwError $ WrongTypeException "Initialization value type different from variable type."
 
 -- Expressions
 checkExp :: Expr -> StaticCheckMonad Type
