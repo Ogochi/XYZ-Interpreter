@@ -19,3 +19,4 @@ type StaticCheckMonad = ReaderT ExtendedEnv (ExceptT StaticCheckException IO)
 data StaticCheckException =
     WrongTypeException String
   | UndefinedException String
+  | FunctionHasNotValueException

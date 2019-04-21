@@ -81,21 +81,21 @@ checkStmt (Cond exp block) = checkStmt (CondElse exp block (Block []))
 checkStmt (While exp block) = checkStmt (Cond exp block)
 
 -- Function
-checkStmt (Function returnType (Ident s) args (Block stmts)) = do
+checkStmt (Function returnType (Ident s) args block) = do
   (env, _) <- ask
   let newEnv = insert s (Func (returnType, argsToTypesList args)) env
-  extendedEnv <- extendEnvByArgs newEnv args
-  result <- local (const extendedEnv) $ checkFuncBlock stmts
+  let extendedEnv = extendEnvByArgs newEnv args
+  result <- local (const (extendedEnv, returnType)) $ checkStmt (BStmt block)
   return $ Just newEnv
 
 -- Helper functions
 
--- TODO
-extendEnvByArgs :: StaticCheckEnv -> [Arg] -> StaticCheckMonad ExtendedEnv
-extendEnvByArgs _ _ = return (Map.empty, Int)
-
-checkFuncBlock :: [Stmt] -> StaticCheckMonad (Maybe StaticCheckEnv)
-checkFuncBlock _ = return Nothing
+extendEnvByArgs :: StaticCheckEnv -> [Arg] -> StaticCheckEnv
+extendEnvByArgs env [] = env
+extendEnvByArgs env ((ValArg argType (Ident s)):rest) =
+  extendEnvByArgs (insert s (Var argType) env) rest
+extendEnvByArgs env ((RefArg argType (Ident s)):rest) =
+  extendEnvByArgs (insert s (Var argType) env) rest
 
 checkDeclItem :: Type -> Item -> StaticCheckMonad (Maybe StaticCheckEnv)
 checkDeclItem itemType (NoInit (Ident s)) = do
@@ -143,8 +143,10 @@ checkExp (Not exp) =
   expOperation exp ELitTrue Bool "NOT requires boolean values." Bool
 
 checkExp (EVar ident) = do
-  Var varType <- getMemory ident
-  return varType
+  var <- getMemory ident
+  case var of
+    Var varType -> return varType
+    Func (_, _) -> throwError $ FunctionHasNotValueException
 
 addOperation :: Type -> Type -> StaticCheckMonad Type
 addOperation Str Str = return Str
