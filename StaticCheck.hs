@@ -35,6 +35,11 @@ checkStmt (BStmt (Block stmts)) = do
 -- Empty
 checkStmt Empty = return Nothing
 
+-- Print
+checkStmt (Print exp) = do
+  checkExp exp
+  return Nothing
+
 -- Decl
 checkStmt (Decl declType []) = return Nothing
 checkStmt (Decl declType (item:rest)) = do
@@ -52,6 +57,13 @@ checkStmt (Ass ident exp) = do
     Var varType -> if varType == expType
       then return Nothing
       else throwError $ WrongTypeException "Assignment value type different from variable type."
+
+-- SExp
+checkStmt (SExp exp) = do
+  checkExp exp
+  return Nothing
+
+-- Helper functions
 
 checkDeclItem :: Type -> Item -> StaticCheckMonad (Maybe StaticCheckEnv)
 checkDeclItem itemType (NoInit (Ident s)) = do

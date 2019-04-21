@@ -91,38 +91,6 @@ execStmt (Function returnType ident args (Block stmts)) = do
   (_, env) <- addFunc ident (returnType, args, stmts)
   return (Nothing, env)
 
-addDecl :: Type -> Item -> PStateMonad Result
-addDecl _ (Init ident exp) = do
-  expVal <- evalExp exp
-  result <- addVar ident expVal
-  return result
-addDecl declType (NoInit ident) = do
-  let value = case declType of
-                Int -> ELitInt 0
-                Str -> EString ""
-                Bool -> ELitFalse
-  result <- addDecl declType (Init ident value)
-  return result
-
-
-initFuncArgs :: Env -> [Arg] -> [Expr] -> PStateMonad Env
-initFuncArgs funcEnv (arg:rest1) (exp:rest2) = do
-  env <- addArgToEnv funcEnv arg exp
-
-  result <- initFuncArgs env rest1 rest2
-  return result
-initFuncArgs env [] [] = return env
-
-addArgToEnv :: Env -> Arg -> Expr -> PStateMonad Env
-addArgToEnv env (ValArg argType ident) exp = do
-  expResult <- evalExp exp
-  (_, env) <- addVarToEnv env ident expResult
-  return env
-addArgToEnv env (RefArg argType (Ident ident)) (EVar (Ident s)) = do
-  Just location <- asks $ lookup s
-  return $ insert ident location env
-addArgToEnv env (RefArg argType ident) _ = throwError WrongRefArgException
-
 -- Expressions
 
 evalExp :: Expr -> PStateMonad Memory
@@ -184,6 +152,40 @@ evalExp (Not exp) = do
 evalExp (Neg exp) = do
   IntVar res <- evalExp exp
   return $ IntVar $ -res
+
+-- Helper functions
+
+addDecl :: Type -> Item -> PStateMonad Result
+addDecl _ (Init ident exp) = do
+  expVal <- evalExp exp
+  result <- addVar ident expVal
+  return result
+addDecl declType (NoInit ident) = do
+  let value = case declType of
+                Int -> ELitInt 0
+                Str -> EString ""
+                Bool -> ELitFalse
+  result <- addDecl declType (Init ident value)
+  return result
+
+
+initFuncArgs :: Env -> [Arg] -> [Expr] -> PStateMonad Env
+initFuncArgs funcEnv (arg:rest1) (exp:rest2) = do
+  env <- addArgToEnv funcEnv arg exp
+
+  result <- initFuncArgs env rest1 rest2
+  return result
+initFuncArgs env [] [] = return env
+
+addArgToEnv :: Env -> Arg -> Expr -> PStateMonad Env
+addArgToEnv env (ValArg argType ident) exp = do
+  expResult <- evalExp exp
+  (_, env) <- addVarToEnv env ident expResult
+  return env
+addArgToEnv env (RefArg argType (Ident ident)) (EVar (Ident s)) = do
+  Just location <- asks $ lookup s
+  return $ insert ident location env
+addArgToEnv env (RefArg argType ident) _ = throwError WrongRefArgException
 
 makeAddOp :: AddOp -> Memory -> Memory -> Memory
 makeAddOp Plus (StringVar s1) (StringVar s2) = StringVar $ s1 ++ s2
