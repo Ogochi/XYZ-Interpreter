@@ -41,7 +41,7 @@ execStmt Empty = justReturn
 -- Block
 execStmt (BStmt (Block stmts)) = do
   result <- local id (interpretStmts stmts)
-  return result
+  justReturn
 
 -- Print
 execStmt (Print exp) = evalExp exp >>= liftIO . putStr . show >> justReturn
