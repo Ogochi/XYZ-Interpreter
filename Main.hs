@@ -38,7 +38,7 @@ run mode s = let ts = myLLexer s in case pProgram ts of
                               hPutStrLn stderr "There was a static check exception\n"
 
                               case exception of
-                                WrongTypeException -> hPutStrLn stderr "Mismatched types."
+                                WrongTypeException s -> hPutStrLn stderr $ "Wrong types - " ++ s
                               exitFailure
                             Right _ -> do
                               result <- runInterpret tree mode
