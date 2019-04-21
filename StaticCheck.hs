@@ -40,6 +40,20 @@ checkStmt (Print exp) = do
   checkExp exp
   return Nothing
 
+-- Return
+checkStmt (Ret exp) = do
+  expType <- checkExp exp
+  (_, returnType) <- ask
+  if expType == returnType
+    then return Nothing
+    else throwError $ WrongTypeException "Function type and return type mismatch."
+
+checkStmt VRet = do
+  (_, returnType) <- ask
+  case returnType of
+    Void -> return Nothing
+    _ -> throwError $ WrongTypeException "Can't return nothing in non-void function."
+
 -- Decl
 checkStmt (Decl declType []) = do
   (env, _) <- ask
