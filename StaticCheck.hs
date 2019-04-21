@@ -148,6 +148,26 @@ checkExp (EVar ident) = do
     Var varType -> return varType
     Func (_, _) -> throwError $ FunctionHasNotValueException
 
+checkExp (EApp ident exps) = do
+  memory <- getMemory ident
+  case memory of
+    Var _ -> throwError CanNotMakeVariableApplicationException
+    Func (returnType, argTypes) -> do
+      typesFromExps <- expsToTypes exps
+      if length typesFromExps == length argTypes
+        then if typesFromExps == argTypes
+          then return returnType
+          else throwError $ WrongTypeException "Args and params types mismatch in function application."
+        else let (Ident s) = ident in throwError $ WrongArgsCountException s
+
+-- Helper functions
+expsToTypes :: [Expr] -> StaticCheckMonad [Type]
+expsToTypes [] = return []
+expsToTypes (exp:rest) = do
+  expType <- checkExp exp
+  restResult <- expsToTypes rest
+  return $ expType : restResult
+
 addOperation :: Type -> Type -> StaticCheckMonad Type
 addOperation Str Str = return Str
 addOperation Int Int = return Int

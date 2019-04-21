@@ -42,6 +42,8 @@ run mode s = let ts = myLLexer s in case pProgram ts of
                                 WrongTypeException s -> hPutStrLn stderr $ "Wrong types - " ++ s
                                 UndefinedException s -> hPutStrLn stderr $ "Ident '" ++ s ++ "' not defined."
                                 FunctionHasNotValueException -> hPutStrLn stderr $ "Function hasn't got any value.\nMaybe you meant 'function_name()' ?"
+                                CanNotMakeVariableApplicationException -> hPutStrLn stderr $ "Can't make variable application.\nMaybe try without '()'"
+                                WrongArgsCountException s -> hPutStrLn stderr $ "Function '" ++ s ++ "needs different number of args."
                               exitFailure
                             Right _ -> do
                               result <- runInterpret tree mode

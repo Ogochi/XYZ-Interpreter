@@ -20,3 +20,5 @@ data StaticCheckException =
     WrongTypeException String
   | UndefinedException String
   | FunctionHasNotValueException
+  | CanNotMakeVariableApplicationException
+  | WrongArgsCountException String
