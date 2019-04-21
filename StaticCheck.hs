@@ -41,7 +41,9 @@ checkStmt (Print exp) = do
   return Nothing
 
 -- Decl
-checkStmt (Decl declType []) = return Nothing
+checkStmt (Decl declType []) = do
+  (env, _) <- ask
+  return $ Just env
 checkStmt (Decl declType (item:rest)) = do
   (_, funcType) <- ask
   Just newEnv <- checkDeclItem declType item
@@ -109,6 +111,10 @@ checkExp (Neg exp) =
 
 checkExp (Not exp) =
   expOperation exp ELitTrue Bool "NOT requires boolean values." Bool
+
+checkExp (EVar ident) = do
+  Var varType <- getMemory ident
+  return varType
 
 addOperation :: Type -> Type -> StaticCheckMonad Type
 addOperation Str Str = return Str
