@@ -5,7 +5,7 @@ import StaticCheckUtils
 import StaticCheckTypes
 
 import Data.Maybe
-import Data.Map as Map
+import Data.Map  as Map hiding(foldl)
 import Control.Monad.Reader
 import Control.Monad.Except
 
@@ -77,7 +77,25 @@ checkStmt (CondElse exp b1 b2) = do
 
 checkStmt (Cond exp block) = checkStmt (CondElse exp block (Block []))
 
+-- While
+checkStmt (While exp block) = checkStmt (Cond exp block)
+
+-- Function
+checkStmt (Function returnType (Ident s) args (Block stmts)) = do
+  (env, _) <- ask
+  let newEnv = insert s (Func (returnType, argsToTypesList args)) env
+  extendedEnv <- extendEnvByArgs newEnv args
+  result <- local (const extendedEnv) $ checkFuncBlock stmts
+  return $ Just newEnv
+
 -- Helper functions
+
+-- TODO
+extendEnvByArgs :: StaticCheckEnv -> [Arg] -> StaticCheckMonad ExtendedEnv
+extendEnvByArgs _ _ = return (Map.empty, Int)
+
+checkFuncBlock :: [Stmt] -> StaticCheckMonad (Maybe StaticCheckEnv)
+checkFuncBlock _ = return Nothing
 
 checkDeclItem :: Type -> Item -> StaticCheckMonad (Maybe StaticCheckEnv)
 checkDeclItem itemType (NoInit (Ident s)) = do

@@ -17,3 +17,11 @@ getMemory (Ident s) = do
   case variable of
     Nothing -> throwError $ UndefinedException s
     Just mem -> return mem
+
+argsToTypesList :: [Arg] -> [Type]
+argsToTypesList [] = []
+argsToTypesList (arg:rest) = (argToType arg) : argsToTypesList rest
+
+argToType :: Arg -> Type
+argToType (ValArg argType _) = argType
+argToType (RefArg argType _) = argType

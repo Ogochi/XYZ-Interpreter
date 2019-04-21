@@ -9,7 +9,7 @@ import Control.Monad.Except
 
 data StaticCheckMemory =
     Var Type
-  | Func (Type, [Type])
+  | Func (Type, [Type]) -- return type, arg types
 
 type StaticCheckEnv = Map String StaticCheckMemory
 type ExtendedEnv = (StaticCheckEnv, Type)
