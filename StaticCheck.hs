@@ -65,6 +65,18 @@ checkStmt (SExp exp) = do
   checkExp exp
   return Nothing
 
+-- If
+checkStmt (CondElse exp b1 b2) = do
+  expType <- checkExp exp
+  case expType of
+    Bool -> do
+      result1 <- checkStmt (BStmt b1)
+      result2 <- checkStmt (BStmt b2)
+      return Nothing
+    _ -> throwError $ WrongTypeException "Expression inside If should be boolean."
+
+checkStmt (Cond exp block) = checkStmt (CondElse exp block (Block []))
+
 -- Helper functions
 
 checkDeclItem :: Type -> Item -> StaticCheckMonad (Maybe StaticCheckEnv)
