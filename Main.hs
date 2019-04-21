@@ -15,6 +15,7 @@ import AbsXYZgrammar
 import Types
 import Interpreter
 import StaticCheck
+import StaticCheckTypes
 
 import ErrM
 
@@ -39,6 +40,7 @@ run mode s = let ts = myLLexer s in case pProgram ts of
 
                               case exception of
                                 WrongTypeException s -> hPutStrLn stderr $ "Wrong types - " ++ s
+                                UndefinedException s -> hPutStrLn stderr $ "Ident '" ++ s ++ "' not defined."
                               exitFailure
                             Right _ -> do
                               result <- runInterpret tree mode
