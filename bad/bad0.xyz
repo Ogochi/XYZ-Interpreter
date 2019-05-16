@@ -1,0 +1,4 @@
+// Wrong syntax
+function void func() {
+
+}

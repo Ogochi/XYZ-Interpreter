@@ -1,0 +1,6 @@
+func void a() {
+
+}
+
+// Wrong args count
+a(20, 5);

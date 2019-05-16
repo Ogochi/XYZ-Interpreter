@@ -1,0 +1,4 @@
+// Wrong type
+func int a() {
+  return true;
+}

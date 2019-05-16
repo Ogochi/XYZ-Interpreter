@@ -1,0 +1,4 @@
+int a;
+
+// Ident not a function
+a();

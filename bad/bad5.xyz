@@ -1,0 +1,6 @@
+func int a() {
+
+}
+
+// Function should return int
+a();

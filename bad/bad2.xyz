@@ -1,0 +1,6 @@
+func void a() {
+
+}
+
+// Not defined ident
+aa();
