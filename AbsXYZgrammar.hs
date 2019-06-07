@@ -29,8 +29,6 @@ data Stmt
     | GeneratorDef Type Ident [Arg] Block
     | Yield Expr
     | Print Expr
-    | ListDrop Ident
-    | ListAdd Ident Expr
   deriving (Eq, Ord, Show, Read)
 
 data Item = NoInit Ident | Init Ident Expr
@@ -39,13 +37,11 @@ data Item = NoInit Ident | Init Ident Expr
 data Arg = ValArg Type Ident | RefArg Type Ident
   deriving (Eq, Ord, Show, Read)
 
-data Type = Int | Str | Bool | Void | List Type | Generator Type
+data Type = Int | Str | Bool | Void | Generator
   deriving (Eq, Ord, Show, Read)
 
 data Expr
-    = EListLength Ident
-    | EListElem Ident Expr
-    | ENextGen Ident
+    = ENextGen Ident
     | EVar Ident
     | ELitInt Integer
     | ELitTrue

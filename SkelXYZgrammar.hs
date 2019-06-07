@@ -34,8 +34,6 @@ transStmt x = case x of
   GeneratorDef type_ ident args block -> failure x
   Yield expr -> failure x
   Print expr -> failure x
-  ListDrop ident -> failure x
-  ListAdd ident expr -> failure x
 transItem :: Item -> Result
 transItem x = case x of
   NoInit ident -> failure x
@@ -50,12 +48,9 @@ transType x = case x of
   Str -> failure x
   Bool -> failure x
   Void -> failure x
-  List type_ -> failure x
-  Generator type_ -> failure x
+  Generator -> failure x
 transExpr :: Expr -> Result
 transExpr x = case x of
-  EListLength ident -> failure x
-  EListElem ident expr -> failure x
   ENextGen ident -> failure x
   EVar ident -> failure x
   ELitInt integer -> failure x

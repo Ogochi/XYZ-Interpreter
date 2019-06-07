@@ -32,20 +32,18 @@ except ``"`` unless preceded by ``\``.
 The set of reserved words is the set of terminals appearing in the grammar. Those reserved words that consist of non-letter characters are called symbols, and they are treated in a different way from those that are similar to identifiers. The lexer follows rules familiar from languages like Haskell, C, and Java, including longest match and spacing conventions.
 
 The reserved words used in XYZgrammar are the following:
-  | ``Generator`` | ``add`` | ``bool`` | ``drop``
-  | ``else`` | ``false`` | ``func`` | ``if``
-  | ``int`` | ``length`` | ``next`` | ``print``
-  | ``return`` | ``string`` | ``true`` | ``void``
-  | ``while`` | ``yield`` |  | 
+  | ``Generator`` | ``bool`` | ``else`` | ``false``
+  | ``func`` | ``if`` | ``int`` | ``next``
+  | ``print`` | ``return`` | ``string`` | ``true``
+  | ``void`` | ``while`` | ``yield`` | 
 
 The symbols used in XYZgrammar are the following:
   | { | } | ; | =
   | , | ( | ) | &
-  | func* | . | [ | ]
-  | < | > | - | !
+  | func* | . | - | !
   | && | || | + | *
-  | / | % | <= | >=
-  | == | != |  | 
+  | / | % | < | <=
+  | > | >= | == | !=
 
 ===Comments===
 Single-line comments begin with //.Multiple-line comments are  enclosed with /* and */.
@@ -74,8 +72,6 @@ All other symbols are terminals.
   |  |  **|**  | ``func*`` //Type// //Ident// ``(`` //[Arg]// ``)`` //Block// 
   |  |  **|**  | ``yield`` //Expr// ``;`` 
   |  |  **|**  | ``print`` ``(`` //Expr// ``)`` ``;`` 
-  |  |  **|**  | //Ident// ``.`` ``drop`` ``(`` ``)`` ``;`` 
-  |  |  **|**  | //Ident// ``.`` ``add`` ``(`` //Expr// ``)`` ``;`` 
   | //Item// | -> | //Ident// 
   |  |  **|**  | //Ident// ``=`` //Expr// 
   | //[Item]// | -> | //Item// 
@@ -85,9 +81,7 @@ All other symbols are terminals.
   | //[Arg]// | -> | **eps**
   |  |  **|**  | //Arg// 
   |  |  **|**  | //Arg// ``,`` //[Arg]// 
-  | //Expr6// | -> | //Ident// ``.`` ``length`` 
-  |  |  **|**  | //Ident// ``[`` //Expr// ``]`` 
-  |  |  **|**  | //Ident// ``.`` ``next`` ``(`` ``)`` 
+  | //Expr6// | -> | //Ident// ``.`` ``next`` ``(`` ``)`` 
   |  |  **|**  | //Ident// 
   |  |  **|**  | //Integer// 
   |  |  **|**  | ``true`` 
@@ -99,8 +93,7 @@ All other symbols are terminals.
   |  |  **|**  | ``string`` 
   |  |  **|**  | ``bool`` 
   |  |  **|**  | ``void`` 
-  |  |  **|**  | ``[`` //Type// ``]`` 
-  |  |  **|**  | ``Generator`` ``<`` //Type// ``>`` 
+  |  |  **|**  | ``Generator`` 
   | //Expr5// | -> | ``-`` //Expr6// 
   |  |  **|**  | ``!`` //Expr6// 
   |  |  **|**  | //Expr6// 

@@ -34,29 +34,24 @@ import ErrM
   '>' { PT _ (TS _ 19) }
   '>=' { PT _ (TS _ 20) }
   'Generator' { PT _ (TS _ 21) }
-  '[' { PT _ (TS _ 22) }
-  ']' { PT _ (TS _ 23) }
-  'add' { PT _ (TS _ 24) }
-  'bool' { PT _ (TS _ 25) }
-  'drop' { PT _ (TS _ 26) }
-  'else' { PT _ (TS _ 27) }
-  'false' { PT _ (TS _ 28) }
-  'func' { PT _ (TS _ 29) }
-  'func*' { PT _ (TS _ 30) }
-  'if' { PT _ (TS _ 31) }
-  'int' { PT _ (TS _ 32) }
-  'length' { PT _ (TS _ 33) }
-  'next' { PT _ (TS _ 34) }
-  'print' { PT _ (TS _ 35) }
-  'return' { PT _ (TS _ 36) }
-  'string' { PT _ (TS _ 37) }
-  'true' { PT _ (TS _ 38) }
-  'void' { PT _ (TS _ 39) }
-  'while' { PT _ (TS _ 40) }
-  'yield' { PT _ (TS _ 41) }
-  '{' { PT _ (TS _ 42) }
-  '||' { PT _ (TS _ 43) }
-  '}' { PT _ (TS _ 44) }
+  'bool' { PT _ (TS _ 22) }
+  'else' { PT _ (TS _ 23) }
+  'false' { PT _ (TS _ 24) }
+  'func' { PT _ (TS _ 25) }
+  'func*' { PT _ (TS _ 26) }
+  'if' { PT _ (TS _ 27) }
+  'int' { PT _ (TS _ 28) }
+  'next' { PT _ (TS _ 29) }
+  'print' { PT _ (TS _ 30) }
+  'return' { PT _ (TS _ 31) }
+  'string' { PT _ (TS _ 32) }
+  'true' { PT _ (TS _ 33) }
+  'void' { PT _ (TS _ 34) }
+  'while' { PT _ (TS _ 35) }
+  'yield' { PT _ (TS _ 36) }
+  '{' { PT _ (TS _ 37) }
+  '||' { PT _ (TS _ 38) }
+  '}' { PT _ (TS _ 39) }
 
 L_ident  { PT _ (TV $$) }
 L_integ  { PT _ (TI $$) }
@@ -90,8 +85,6 @@ Stmt : ';' { AbsXYZgrammar.Empty }
      | 'func*' Type Ident '(' ListArg ')' Block { AbsXYZgrammar.GeneratorDef $2 $3 $5 $7 }
      | 'yield' Expr ';' { AbsXYZgrammar.Yield $2 }
      | 'print' '(' Expr ')' ';' { AbsXYZgrammar.Print $3 }
-     | Ident '.' 'drop' '(' ')' ';' { AbsXYZgrammar.ListDrop $1 }
-     | Ident '.' 'add' '(' Expr ')' ';' { AbsXYZgrammar.ListAdd $1 $5 }
 Item :: { Item }
 Item : Ident { AbsXYZgrammar.NoInit $1 }
      | Ident '=' Expr { AbsXYZgrammar.Init $1 $3 }
@@ -105,9 +98,7 @@ ListArg : {- empty -} { [] }
         | Arg { (:[]) $1 }
         | Arg ',' ListArg { (:) $1 $3 }
 Expr6 :: { Expr }
-Expr6 : Ident '.' 'length' { AbsXYZgrammar.EListLength $1 }
-      | Ident '[' Expr ']' { AbsXYZgrammar.EListElem $1 $3 }
-      | Ident '.' 'next' '(' ')' { AbsXYZgrammar.ENextGen $1 }
+Expr6 : Ident '.' 'next' '(' ')' { AbsXYZgrammar.ENextGen $1 }
       | Ident { AbsXYZgrammar.EVar $1 }
       | Integer { AbsXYZgrammar.ELitInt $1 }
       | 'true' { AbsXYZgrammar.ELitTrue }
@@ -120,8 +111,7 @@ Type : 'int' { AbsXYZgrammar.Int }
      | 'string' { AbsXYZgrammar.Str }
      | 'bool' { AbsXYZgrammar.Bool }
      | 'void' { AbsXYZgrammar.Void }
-     | '[' Type ']' { AbsXYZgrammar.List $2 }
-     | 'Generator' '<' Type '>' { AbsXYZgrammar.Generator $3 }
+     | 'Generator' { AbsXYZgrammar.Generator }
 Expr5 :: { Expr }
 Expr5 : '-' Expr6 { AbsXYZgrammar.Neg $2 }
       | '!' Expr6 { AbsXYZgrammar.Not $2 }

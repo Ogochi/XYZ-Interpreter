@@ -34,12 +34,6 @@ Yield.        Stmt ::= "yield" Expr ";" ;
 -- Operations ----------------------------------------------
 
 Print.     Stmt ::= "print" "(" Expr ")" ";" ;
-
-ListDrop. Stmt ::= Ident "." "drop" "(" ")" ";" ;
-ListAdd.  Stmt ::= Ident "." "add" "(" Expr ")" ";" ;
-EListLength. Expr6 ::= Ident "." "length" ;
-EListElem.   Expr6 ::= Ident "[" Expr "]" ;
-
 ENextGen. Expr6 ::= Ident "." "next" "(" ")" ;
 
 -- Types ---------------------------------------------------
@@ -48,8 +42,7 @@ Int.       Type ::= "int" ;
 Str.       Type ::= "string" ;
 Bool.      Type ::= "bool" ;
 Void.      Type ::= "void" ;
-List.      Type ::= "[" Type "]" ;
-Generator. Type ::= "Generator" "<" Type ">" ;
+Generator. Type ::= "Generator" ;
 
 -- Expressions ---------------------------------------------
 

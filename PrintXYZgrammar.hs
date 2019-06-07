@@ -107,8 +107,6 @@ instance Print Stmt where
     GeneratorDef type_ id args block -> prPrec i 0 (concatD [doc (showString "func*"), prt 0 type_, prt 0 id, doc (showString "("), prt 0 args, doc (showString ")"), prt 0 block])
     Yield expr -> prPrec i 0 (concatD [doc (showString "yield"), prt 0 expr, doc (showString ";")])
     Print expr -> prPrec i 0 (concatD [doc (showString "print"), doc (showString "("), prt 0 expr, doc (showString ")"), doc (showString ";")])
-    ListDrop id -> prPrec i 0 (concatD [prt 0 id, doc (showString "."), doc (showString "drop"), doc (showString "("), doc (showString ")"), doc (showString ";")])
-    ListAdd id expr -> prPrec i 0 (concatD [prt 0 id, doc (showString "."), doc (showString "add"), doc (showString "("), prt 0 expr, doc (showString ")"), doc (showString ";")])
   prtList _ [] = (concatD [])
   prtList _ (x:xs) = (concatD [prt 0 x, prt 0 xs])
 instance Print Item where
@@ -130,13 +128,10 @@ instance Print Type where
     Str -> prPrec i 0 (concatD [doc (showString "string")])
     Bool -> prPrec i 0 (concatD [doc (showString "bool")])
     Void -> prPrec i 0 (concatD [doc (showString "void")])
-    List type_ -> prPrec i 0 (concatD [doc (showString "["), prt 0 type_, doc (showString "]")])
-    Generator type_ -> prPrec i 0 (concatD [doc (showString "Generator"), doc (showString "<"), prt 0 type_, doc (showString ">")])
+    Generator -> prPrec i 0 (concatD [doc (showString "Generator")])
 
 instance Print Expr where
   prt i e = case e of
-    EListLength id -> prPrec i 6 (concatD [prt 0 id, doc (showString "."), doc (showString "length")])
-    EListElem id expr -> prPrec i 6 (concatD [prt 0 id, doc (showString "["), prt 0 expr, doc (showString "]")])
     ENextGen id -> prPrec i 6 (concatD [prt 0 id, doc (showString "."), doc (showString "next"), doc (showString "("), doc (showString ")")])
     EVar id -> prPrec i 6 (concatD [prt 0 id])
     ELitInt n -> prPrec i 6 (concatD [prt 0 n])
