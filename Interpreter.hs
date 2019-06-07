@@ -39,6 +39,26 @@ execGenStmt :: Stmt -> PStateMonad GenResult
 execGenStmt (BStmt (Block stmts)) = do
   result <- local id (interpretGenStmts stmts)
   return result
+
+execGenStmt (Cond exp block) = execGenStmt $ CondElse exp block (Block [])
+
+execGenStmt (CondElse exp b1 b2) = do
+  BoolVar expVal <- evalExp exp
+  result <- execGenStmt $ BStmt $ if expVal then b1 else b2
+  return result
+
+execGenStmt (While exp block) = do
+  BoolVar expVal <- evalExp exp
+  if expVal then do
+    (mem, stmts, env) <- execGenStmt $ BStmt block
+    if isJust mem then
+      return (mem, stmts ++ [While exp block], env)
+    else do
+      result2 <- execGenStmt $ While exp block
+      return result2
+  else
+    justReturnGen
+
 execGenStmt stmt = do
   (result, env) <- execStmt stmt
   return (result, [], env)
