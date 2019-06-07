@@ -18,9 +18,9 @@ data Memory =
     IntVar Integer
   | BoolVar Bool
   | StringVar String
-  | GenVar String
+  | GenVar (Type, [Stmt], Env)
   | FuncDef (Type, [Arg], [Stmt], Env)
-  | GenDef (Type, [Arg], [Stmt], Env, [Location])
+  | GenDef (Type, [Arg], [Stmt], Env)
   deriving Eq
 
 type PState = (Map Location Memory, Location, Mode)

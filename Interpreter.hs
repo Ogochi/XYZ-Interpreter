@@ -101,15 +101,20 @@ execStmt (GeneratorDef returnType ident args (Block stmts)) = do
 evalExp :: Expr -> PStateMonad Memory
 
 evalExp (EApp ident exps) = do
-  FuncDef (returnType, args, stmts, env) <- getVar ident
-  newEnv <- initFuncArgs env args exps
+  varDef <- getVar ident
+  case varDef of
+    FuncDef (returnType, args, stmts, env) -> do
+      newEnv <- initFuncArgs env args exps
 
-  (result, _) <- local (const newEnv) $ interpretStmts stmts
-  case result of
-    Nothing -> if isVoid returnType
-               then return $ StringVar ""
-               else throwError NoReturnStmtException
-    Just resultValue -> return resultValue
+      (result, _) <- local (const newEnv) $ interpretStmts stmts
+      case result of
+        Nothing -> if isVoid returnType
+                   then return $ StringVar ""
+                   else throwError NoReturnStmtException
+        Just resultValue -> return resultValue
+    GenDef (returnType, args, stmts, env) -> do
+      newEnv <- initFuncArgs env args exps
+      return $ GenVar (returnType, stmts, newEnv)
 
 evalExp (EVar ident) = getVar ident
 
