@@ -25,24 +25,18 @@ interpretStmts (x:rest) = do
     return restResult
 interpretStmts [] = justReturn
 
--- TODO zapamietywanie stmts na stosie; osobne execStmt dla tych co uzywaja interpretStmts
-interpretGenStmts :: [Stmt] -> Location -> PStateMonad Result
-interpretGenStmts (x:rest) loc = do
-  (result, env) <- execStmt x
+interpretGenStmts :: [Stmt] -> PStateMonad GenResult
+interpretGenStmts (x:rest) = do
+  (result, stmtsLeft, env) <- execGenStmt x
   if isJust result then
-
-
-    return (result, env)
+    return (result, stmtsLeft ++ rest, env)
   else do
-    restResult <- local (const env) (interpretGenStmts rest loc)
+    restResult <- local (const env) (interpretGenStmts rest)
     return restResult
-interpretGenStmts [] loc = do
-  env <- ask
-  updateGen loc [] env
-  justReturn
+interpretGenStmts [] = justReturnGen
 
-execGenStmt :: Stmt -> Location -> PStateMonad Result
-execGenStmt stmt _ = execStmt stmt
+execGenStmt :: Stmt -> PStateMonad GenResult
+execGenStmt stmt = justReturnGen
 
 execStmt :: Stmt -> PStateMonad Result
 
@@ -140,14 +134,14 @@ evalExp (EApp ident exps) = do
 
 evalExp (ENextGen ident) = do
   GenVar (returnType, stmts, env) <- getVar ident
-  varLoc <- getIdentLoc ident
 
-  (result, _) <- local (const env) $ interpretGenStmts stmts varLoc
+  (result, stmtsLeft, newEnv) <- local (const env) $ interpretGenStmts stmts
   case result of
-    Nothing -> if isVoid returnType
-               then return $ StringVar ""
-               else throwError NoGenResultException
-    Just resultValue -> return resultValue
+    Nothing -> throwError NoGenResultException
+    Just resultValue -> do
+      varLoc <- getIdentLoc ident
+      updateGen varLoc stmtsLeft newEnv
+      return resultValue
 
 evalExp (EVar ident) = getVar ident
 

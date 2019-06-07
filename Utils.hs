@@ -80,3 +80,8 @@ justReturn :: PStateMonad Result
 justReturn = do
   env <- ask
   return (Nothing, env)
+
+justReturnGen :: PStateMonad GenResult
+justReturnGen = do
+  env <- ask
+  return (Nothing, [], env)

@@ -34,6 +34,7 @@ data RuntimeException =
 
 -- (mem value we need to pass ex. with return, next env)
 type Result = (Maybe Memory, Env)
+type GenResult = (Maybe Memory, [Stmt], Env)
 
 -- Main monad holds env and state using Exception
 type PStateMonad = ReaderT Env (StateT PState (ExceptT RuntimeException IO))
