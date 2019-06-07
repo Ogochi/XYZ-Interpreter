@@ -50,6 +50,19 @@ addFunc (Ident s) (returnType, args, stmts) = do
   put (insert newLoc (FuncDef (returnType, args, stmts, newEnv)) mem, newLoc + 1, mode)
   return (Nothing, newEnv)
 
+addGen :: Ident -> (Type, [Arg], [Stmt]) -> PStateMonad Result
+addGen (Ident s) (returnType, args, stmts) = do
+  env <- ask
+  (mem, newLoc, mode) <- get
+
+  let newEnv = insert s newLoc env
+  let nextLoc = newLoc + (toInteger $ length args) + 1
+  let genArgsLoc = [(newLoc + 1)..(nextLoc - 1)]
+  let genDef = GenDef (returnType, args, stmts, newEnv, genArgsLoc)
+
+  put (insert newLoc genDef mem, nextLoc, mode)
+  return (Nothing, newEnv)
+
 isVoid :: Type -> Bool
 isVoid Void = True
 isVoid _ = False

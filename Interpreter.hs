@@ -91,6 +91,11 @@ execStmt (Function returnType ident args (Block stmts)) = do
   (_, env) <- addFunc ident (returnType, args, stmts)
   return (Nothing, env)
 
+-- Generator
+execStmt (GeneratorDef returnType ident args (Block stmts)) = do
+  (_, env) <- addGen ident (returnType, args, stmts)
+  return (Nothing, env)
+
 -- Expressions
 
 evalExp :: Expr -> PStateMonad Memory
@@ -165,6 +170,7 @@ addDecl declType (NoInit ident) = do
                 Int -> ELitInt 0
                 Str -> EString ""
                 Bool -> ELitFalse
+                Generator -> EString ""
   result <- addDecl declType (Init ident value)
   return result
 
