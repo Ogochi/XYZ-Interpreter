@@ -16,6 +16,11 @@ getInterpreterMode = do
   (_, _, mode) <- get
   return mode
 
+getIdentLoc :: Ident -> PStateMonad Location
+getIdentLoc (Ident s) = do
+  Just location <- asks $ lookup s
+  return location
+
 getVar :: Ident -> PStateMonad Memory
 getVar (Ident s) = do
   Just location <- asks $ lookup s

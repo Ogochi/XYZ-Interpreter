@@ -29,6 +29,7 @@ data RuntimeException =
     ZeroDivException
   | ZeroModException
   | NoReturnStmtException
+  | NoGenResultException
   | WrongRefArgException
 
 -- (mem value we need to pass ex. with return, next env)

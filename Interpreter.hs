@@ -25,6 +25,9 @@ interpretStmts (x:rest) = do
     return restResult
 interpretStmts [] = justReturn
 
+interpretGenStmts :: [Stmt] -> Location -> PStateMonad Result
+interpretGenStmts _ _ = justReturn
+
 execStmt :: Stmt -> PStateMonad Result
 
 -- Return
@@ -115,6 +118,17 @@ evalExp (EApp ident exps) = do
     GenDef (returnType, args, stmts, env) -> do
       newEnv <- initFuncArgs env args exps
       return $ GenVar (returnType, stmts, newEnv)
+
+evalExp (ENextGen ident) = do
+  GenVar (returnType, stmts, env) <- getVar ident
+  varLoc <- getIdentLoc ident
+
+  (result, _) <- local (const env) $ interpretGenStmts stmts varLoc
+  case result of
+    Nothing -> if isVoid returnType
+               then return $ StringVar ""
+               else throwError NoGenResultException
+    Just resultValue -> return resultValue
 
 evalExp (EVar ident) = getVar ident
 
