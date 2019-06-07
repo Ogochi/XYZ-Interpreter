@@ -26,9 +26,16 @@ interpretStmts (x:rest) = do
 interpretStmts [] = justReturn
 
 interpretGenStmts :: [Stmt] -> Location -> PStateMonad Result
-interpretGenStmts _ _ = justReturn
+interpretGenStmts [] loc = do
+  env <- ask
+  
+  updateGen loc [] env
+  justReturn
 
 execStmt :: Stmt -> PStateMonad Result
+
+-- Yield
+execStmt (Yield exp) = execStmt (Ret exp)
 
 -- Return
 execStmt VRet = justReturn

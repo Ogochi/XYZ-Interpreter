@@ -21,6 +21,14 @@ getIdentLoc (Ident s) = do
   Just location <- asks $ lookup s
   return location
 
+updateGen :: Location -> [Stmt] -> Env -> PStateMonad Result
+updateGen loc stmts env = do
+  (mem, newLoc, mode) <- get
+  let Just (GenVar (returnType, _, _)) = lookup loc mem
+
+  put (insert loc (GenVar (returnType, stmts, env)) mem, newLoc, mode)
+  justReturn
+
 getVar :: Ident -> PStateMonad Memory
 getVar (Ident s) = do
   Just location <- asks $ lookup s
