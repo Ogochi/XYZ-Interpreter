@@ -25,12 +25,24 @@ interpretStmts (x:rest) = do
     return restResult
 interpretStmts [] = justReturn
 
+-- TODO zapamietywanie stmts na stosie; osobne execStmt dla tych co uzywaja interpretStmts
 interpretGenStmts :: [Stmt] -> Location -> PStateMonad Result
+interpretGenStmts (x:rest) loc = do
+  (result, env) <- execStmt x
+  if isJust result then
+
+
+    return (result, env)
+  else do
+    restResult <- local (const env) (interpretGenStmts rest loc)
+    return restResult
 interpretGenStmts [] loc = do
   env <- ask
-  
   updateGen loc [] env
   justReturn
+
+execGenStmt :: Stmt -> Location -> PStateMonad Result
+execGenStmt stmt _ = execStmt stmt
 
 execStmt :: Stmt -> PStateMonad Result
 
