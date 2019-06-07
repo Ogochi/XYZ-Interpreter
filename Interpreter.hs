@@ -36,7 +36,12 @@ interpretGenStmts (x:rest) = do
 interpretGenStmts [] = justReturnGen
 
 execGenStmt :: Stmt -> PStateMonad GenResult
-execGenStmt stmt = justReturnGen
+execGenStmt (BStmt (Block stmts)) = do
+  result <- local id (interpretGenStmts stmts)
+  return result
+execGenStmt stmt = do
+  (result, env) <- execStmt stmt
+  return (result, [], env)
 
 execStmt :: Stmt -> PStateMonad Result
 
@@ -57,7 +62,7 @@ execStmt Empty = justReturn
 -- Block
 execStmt (BStmt (Block stmts)) = do
   result <- local id (interpretStmts stmts)
-  justReturn
+  return result
 
 -- Print
 execStmt (Print exp) = evalExp exp >>= liftIO . putStr . show >> justReturn
