@@ -44,6 +44,7 @@ run mode s = let ts = myLLexer s in case pProgram ts of
                                 FunctionHasNotValueException -> hPutStrLn stderr $ "Function hasn't got any value.\nMaybe you meant 'function_name()' ?"
                                 CanNotMakeVariableApplicationException -> hPutStrLn stderr $ "Can't make variable application.\nMaybe try without '()'"
                                 WrongArgsCountException s -> hPutStrLn stderr $ "Function '" ++ s ++ "' needs different number of args."
+                                ReturnNotInFunctionException -> hPutStrLn stderr $ "Return can be only inside function or main program."
                               exitFailure
                             Right _ -> do
                               result <- runInterpret tree mode

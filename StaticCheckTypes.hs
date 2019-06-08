@@ -10,9 +10,10 @@ import Control.Monad.Except
 data StaticCheckMemory =
     Var Type
   | Func (Type, [Type]) -- return type, arg types
+  | Gen (Type, [Type])
 
 type StaticCheckEnv = Map String StaticCheckMemory
-type ExtendedEnv = (StaticCheckEnv, Type)
+type ExtendedEnv = (StaticCheckEnv, Type, Bool) -- Bool - isFunction
 
 type StaticCheckMonad = ReaderT ExtendedEnv (ExceptT StaticCheckException IO)
 
@@ -22,3 +23,4 @@ data StaticCheckException =
   | FunctionHasNotValueException
   | CanNotMakeVariableApplicationException
   | WrongArgsCountException String
+  | ReturnNotInFunctionException

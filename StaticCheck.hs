@@ -5,11 +5,11 @@ import StaticCheckUtils
 import StaticCheckTypes
 
 import Data.Maybe
-import Data.Map  as Map hiding(foldl)
+import Data.Map as Map hiding(foldl)
 import Control.Monad.Reader
 import Control.Monad.Except
 
-runStaticCheck tree = runExceptT $ runReaderT (checkStmts tree) (Map.empty, Void)
+runStaticCheck tree = runExceptT $ runReaderT (checkStmts tree) (Map.empty, Void, True)
 
 checkStmts :: [Stmt] -> StaticCheckMonad (Maybe StaticCheckEnv)
 checkStmts [] = return Nothing
@@ -21,8 +21,8 @@ checkStmts (stmt:rest) = do
       result <- checkStmts rest
       return result
     Just newEnv -> do
-      (_, funcType) <- ask
-      result <- local (const (newEnv, funcType)) $ checkStmts rest
+      (_, funcType, isFunction) <- ask
+      result <- local (const (newEnv, funcType, isFunction)) $ checkStmts rest
       return result
 
 checkStmt :: Stmt -> StaticCheckMonad (Maybe StaticCheckEnv)
@@ -43,25 +43,33 @@ checkStmt (Print exp) = do
 -- Return
 checkStmt (Ret exp) = do
   expType <- checkExp exp
-  (_, returnType) <- ask
-  if expType == returnType
-    then return Nothing
-    else throwError $ WrongTypeException "Function type and return type mismatch."
+  (_, returnType, isFunction) <- ask
+
+  if not isFunction
+    then throwError $ ReturnNotInFunctionException
+    else
+      if expType == returnType
+        then return Nothing
+        else throwError $ WrongTypeException "Function type and return type mismatch."
 
 checkStmt VRet = do
-  (_, returnType) <- ask
-  case returnType of
-    Void -> return Nothing
-    _ -> throwError $ WrongTypeException "Can't return nothing in non-void function."
+  (_, returnType, isFunction) <- ask
+
+  if not isFunction
+    then throwError $ ReturnNotInFunctionException
+    else
+      case returnType of
+        Void -> return Nothing
+        _ -> throwError $ WrongTypeException "Can't return nothing in non-void function."
 
 -- Decl
 checkStmt (Decl declType []) = do
-  (env, _) <- ask
+  (env, _, _) <- ask
   return $ Just env
 checkStmt (Decl declType (item:rest)) = do
-  (_, funcType) <- ask
+  (_, funcType, isFunction) <- ask
   Just newEnv <- checkDeclItem declType item
-  restResult <- local (const (newEnv, funcType)) $ checkStmt (Decl declType rest)
+  restResult <- local (const (newEnv, funcType, isFunction)) $ checkStmt (Decl declType rest)
   return restResult
 
 -- Ass
@@ -96,11 +104,21 @@ checkStmt (While exp block) = checkStmt (Cond exp block)
 
 -- Function
 checkStmt (Function returnType (Ident s) args block) = do
-  (env, _) <- ask
+  (env, _, _) <- ask
   let newEnv = insert s (Func (returnType, argsToTypesList args)) env
   let extendedEnv = extendEnvByArgs newEnv args
-  result <- local (const (extendedEnv, returnType)) $ checkStmt (BStmt block)
+  result <- local (const (extendedEnv, returnType, True)) $ checkStmt (BStmt block)
   return $ Just newEnv
+
+-- TODO
+-- yield tylko w ciałach generatorów
+-- generator jest jak funkcja
+-- przypisanie do generatora tylko przez aplikację
+-- next() tylko na generatorach
+-- generator nie ma wartosci w exp
+-- Generator
+-- checkStmt (Generator returnType (Ident s) args block) = do
+
 
 -- Helper functions
 
@@ -113,7 +131,7 @@ extendEnvByArgs env ((RefArg argType (Ident s)):rest) =
 
 checkDeclItem :: Type -> Item -> StaticCheckMonad (Maybe StaticCheckEnv)
 checkDeclItem itemType (NoInit (Ident s)) = do
-  (env, funcType) <- ask
+  (env, funcType, _) <- ask
   return $ Just $ insert s (Var itemType) env
 
 checkDeclItem itemType (Init ident exp) = do

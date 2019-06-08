@@ -12,7 +12,7 @@ import Prelude hiding(lookup)
 
 getMemory :: Ident -> StaticCheckMonad StaticCheckMemory
 getMemory (Ident s) = do
-  (env, _) <- ask
+  (env, _, _) <- ask
   let variable = lookup s env
   case variable of
     Nothing -> throwError $ UndefinedException s
