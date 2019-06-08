@@ -123,14 +123,15 @@ checkStmt (Function returnType (Ident s) args block) = do
   return $ Just newEnv
 
 -- TODO
--- yield tylko w ciałach generatorów
--- generator jest jak funkcja
 -- przypisanie do generatora tylko przez aplikację
 -- next() tylko na generatorach
--- generator nie ma wartosci w exp
--- Generator
--- checkStmt (Generator returnType (Ident s) args block) = do
-
+-- EApp
+checkStmt (GeneratorDef returnType (Ident s) args block) = do
+  (env, _, _) <- ask
+  let newEnv = insert s (Gen (returnType, argsToTypesList args)) env
+  let extendedEnv = extendEnvByArgs newEnv args
+  result <- local (const (extendedEnv, returnType, False)) $ checkStmt (BStmt block)
+  return $ Just newEnv
 
 -- Helper functions
 
@@ -189,8 +190,10 @@ checkExp (Not exp) =
 checkExp (EVar ident) = do
   var <- getMemory ident
   case var of
+    Var (Generator) -> throwError $ GeneratorVarHasNotValueException
     Var varType -> return varType
     Func (_, _) -> throwError $ FunctionHasNotValueException
+    Gen (_, _) -> throwError $ GeneratorHasNotValueException
 
 checkExp (EApp ident exps) = do
   memory <- getMemory ident

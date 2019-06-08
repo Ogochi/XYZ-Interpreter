@@ -25,3 +25,5 @@ data StaticCheckException =
   | WrongArgsCountException String
   | ReturnNotInFunctionException
   | YieldNotInGeneratorException
+  | GeneratorHasNotValueException
+  | GeneratorVarHasNotValueException

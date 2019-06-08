@@ -42,6 +42,8 @@ run mode s = let ts = myLLexer s in case pProgram ts of
                                 WrongTypeException s -> hPutStrLn stderr $ "Wrong types - " ++ s
                                 UndefinedException s -> hPutStrLn stderr $ "Ident '" ++ s ++ "' not defined."
                                 FunctionHasNotValueException -> hPutStrLn stderr $ "Function hasn't got any value.\nMaybe you meant 'function_name()' ?"
+                                GeneratorHasNotValueException -> hPutStrLn stderr $ "Generator hasn't got any value.\nYou should instantiate generator first."
+                                GeneratorVarHasNotValueException -> hPutStrLn stderr $ "Generator object hasn't got any value.\n Maybe you meant 'generator_object_name.next()' ?"
                                 CanNotMakeVariableApplicationException -> hPutStrLn stderr $ "Can't make variable application.\nMaybe try without '()'"
                                 WrongArgsCountException s -> hPutStrLn stderr $ "Function '" ++ s ++ "' needs different number of args."
                                 ReturnNotInFunctionException -> hPutStrLn stderr $ "Return can be only inside function or main program."
