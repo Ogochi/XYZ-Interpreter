@@ -24,3 +24,4 @@ data StaticCheckException =
   | CanNotMakeVariableApplicationException
   | WrongArgsCountException String
   | ReturnNotInFunctionException
+  | YieldNotInGeneratorException

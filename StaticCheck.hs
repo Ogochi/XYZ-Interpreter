@@ -40,6 +40,18 @@ checkStmt (Print exp) = do
   checkExp exp
   return Nothing
 
+-- Yield
+checkStmt (Yield exp) = do
+  expType <- checkExp exp
+  (_, returnType, isFunction) <- ask
+
+  if isFunction
+    then throwError $ YieldNotInGeneratorException
+    else
+      if expType == returnType
+        then return Nothing
+        else throwError $ WrongTypeException "Generator type and return type mismatch."
+
 -- Return
 checkStmt (Ret exp) = do
   expType <- checkExp exp

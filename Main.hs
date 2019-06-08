@@ -45,6 +45,7 @@ run mode s = let ts = myLLexer s in case pProgram ts of
                                 CanNotMakeVariableApplicationException -> hPutStrLn stderr $ "Can't make variable application.\nMaybe try without '()'"
                                 WrongArgsCountException s -> hPutStrLn stderr $ "Function '" ++ s ++ "' needs different number of args."
                                 ReturnNotInFunctionException -> hPutStrLn stderr $ "Return can be only inside function or main program."
+                                YieldNotInGeneratorException -> hPutStrLn stderr $ "Yield can be only inside generators."
                               exitFailure
                             Right _ -> do
                               result <- runInterpret tree mode
