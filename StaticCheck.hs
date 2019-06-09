@@ -8,6 +8,7 @@ import Data.Maybe
 import Data.Map as Map hiding(foldl)
 import Control.Monad.Reader
 import Control.Monad.Except
+import Prelude hiding(lookup)
 
 runStaticCheck tree = runExceptT $ runReaderT (checkStmts tree) (Map.empty, Void, True)
 
@@ -50,7 +51,7 @@ checkStmt (Yield exp) = do
     else
       if expType == returnType
         then return Nothing
-        else throwError $ WrongTypeException "Generator type and return type mismatch."
+        else throwError $ WrongTypeException "Generator type and yield type mismatch."
 
 -- Return
 checkStmt (Ret exp) = do
@@ -91,7 +92,14 @@ checkStmt (Ass ident exp) = do
   case mem of
     Func _ -> throwError $ WrongTypeException "Couldn't assign value to function."
     Var varType -> if varType == expType
-      then return Nothing
+      then case varType of
+        Generator -> do
+          let EApp (Ident genName) _ = exp
+          (env, _, _) <- ask
+          let Just (Gen (returnType, _)) = lookup genName env
+          let Ident s = ident
+          return $ Just $ insert s (GenVar returnType) env
+        _ -> return Nothing
       else throwError $ WrongTypeException "Assignment value type different from variable type."
 
 -- SExp
@@ -147,6 +155,16 @@ checkDeclItem itemType (NoInit (Ident s)) = do
   (env, funcType, _) <- ask
   return $ Just $ insert s (Var itemType) env
 
+checkDeclItem Generator (Init (Ident ident) exp) = do
+  expType <- checkExp exp
+  if expType == Generator
+    then do
+      let EApp (Ident genName) _ = exp
+      (env, _, _) <- ask
+      let Just (Gen (returnType, _)) = lookup genName env
+      return $ Just $ insert ident (GenVar returnType) env
+    else throwError $ WrongTypeException "Initialization value type different from variable type."
+
 checkDeclItem itemType (Init ident exp) = do
   expType <- checkExp exp
   if expType == itemType
@@ -199,6 +217,13 @@ checkExp (EApp ident exps) = do
   memory <- getMemory ident
   case memory of
     Var _ -> throwError CanNotMakeVariableApplicationException
+    Gen (returnType, argTypes) -> do
+      typesFromExps <- expsToTypes exps
+      if length typesFromExps == length argTypes
+        then if typesFromExps == argTypes
+          then return Generator
+          else throwError $ WrongTypeException "Args and params types mismatch in generator creation."
+        else let (Ident s) = ident in throwError $ WrongArgsCountException s
     Func (returnType, argTypes) -> do
       typesFromExps <- expsToTypes exps
       if length typesFromExps == length argTypes
@@ -206,6 +231,11 @@ checkExp (EApp ident exps) = do
           then return returnType
           else throwError $ WrongTypeException "Args and params types mismatch in function application."
         else let (Ident s) = ident in throwError $ WrongArgsCountException s
+
+-- checkExp (ENextGen ident) = do
+--   memory <- getMemory ident
+--   case memory of
+--     Var (Generator) ->
 
 -- Helper functions
 expsToTypes :: [Expr] -> StaticCheckMonad [Type]

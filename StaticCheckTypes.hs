@@ -9,6 +9,7 @@ import Control.Monad.Except
 
 data StaticCheckMemory =
     Var Type
+  | GenVar Type -- return types
   | Func (Type, [Type]) -- return type, arg types
   | Gen (Type, [Type])
 
