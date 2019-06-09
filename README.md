@@ -40,7 +40,6 @@ There are following allowed types
 | `int` | 0 | - |
 | `string` | "" | - |
 | `bool` | `false` | - |
-| [`type`] | **empty list** | list of `type` |
 | Generator<`type`> | **do not exist** | generator instance of `type` |
 
 For `int`, `string`, `bool` exist intuitive literals.
@@ -67,16 +66,17 @@ Printing expressions to stdout.
 
 ```Java
 print(EXPRESSION);
+println(EXPRESSION);
 ```
 
 #### Variables
 ```Java
 int a = 2, b, c = 10;
 a = a + 2;
-print(a);
+println(a);
 ```
 
-#### If, While
+#### If, While, ForEach of generator
 ```Java
 if (CONDITION) {
   BODY
@@ -91,22 +91,10 @@ if (CONDITION) {
 while (CONDITION) {
   BODY
 }
-```
 
-#### Lists
-Lists acts like stacks. We can add value to the end, remove value from the end,
-access value at particular position (indexing from 0) and get length;
-```Java
-// Declaration
-[int] arr;
-// Adding value at the end
-arr.add(5);
-// Printing specific value
-print(arr[0]);
-// Removing last elem
-arr.drop();
-// Printing length
-print(arr.length)
+for (TYPE VAR_NAME : GENERATOR_INSTANCE) {
+  BODY
+}
 ```
 
 #### Functions
@@ -139,7 +127,11 @@ func* RETURN_TYPE NAME(ARGS) {
 Generator<RETURN_TYPE> myGenInstance;
 
 // Printing next value
-print(myGenInstance.next());
+println(myGenInstance.next());
+
+// Printing next value or default if generator do not have more values
+RETURN_TYPE var;
+println(myGenInstance.nextOrDefault(var));
 ```
 
 ### Features
@@ -149,12 +141,11 @@ print(myGenInstance.next());
 - If and While
 - Arithmetics with + - * / ( ) and comparisions
 - Functions with recursion and params by value/reference of every possible type
-- Printing to stdout
+- Printing to stdout (print and println)
 - Overriding of identifiers with static binding
 - Handling runtime exceptions
 - Nesting of function definitions and returning every possible type
-- "Lists"
-- Generators
+- Extended Generators: Nesting of generators, Generators return every possible type, for loop over all generator values, parametrisation of generators like functions, .next() and .nextOrDefault() methods 
 - Static typing
 
 **Expected points count:** 30 / 30
