@@ -26,32 +26,34 @@ import ErrM
   '-' { PT _ (TS _ 11) }
   '.' { PT _ (TS _ 12) }
   '/' { PT _ (TS _ 13) }
-  ';' { PT _ (TS _ 14) }
-  '<' { PT _ (TS _ 15) }
-  '<=' { PT _ (TS _ 16) }
-  '=' { PT _ (TS _ 17) }
-  '==' { PT _ (TS _ 18) }
-  '>' { PT _ (TS _ 19) }
-  '>=' { PT _ (TS _ 20) }
-  'Generator' { PT _ (TS _ 21) }
-  'bool' { PT _ (TS _ 22) }
-  'else' { PT _ (TS _ 23) }
-  'false' { PT _ (TS _ 24) }
-  'func' { PT _ (TS _ 25) }
-  'func*' { PT _ (TS _ 26) }
-  'if' { PT _ (TS _ 27) }
-  'int' { PT _ (TS _ 28) }
-  'next' { PT _ (TS _ 29) }
-  'print' { PT _ (TS _ 30) }
-  'return' { PT _ (TS _ 31) }
-  'string' { PT _ (TS _ 32) }
-  'true' { PT _ (TS _ 33) }
-  'void' { PT _ (TS _ 34) }
-  'while' { PT _ (TS _ 35) }
-  'yield' { PT _ (TS _ 36) }
-  '{' { PT _ (TS _ 37) }
-  '||' { PT _ (TS _ 38) }
-  '}' { PT _ (TS _ 39) }
+  ':' { PT _ (TS _ 14) }
+  ';' { PT _ (TS _ 15) }
+  '<' { PT _ (TS _ 16) }
+  '<=' { PT _ (TS _ 17) }
+  '=' { PT _ (TS _ 18) }
+  '==' { PT _ (TS _ 19) }
+  '>' { PT _ (TS _ 20) }
+  '>=' { PT _ (TS _ 21) }
+  'Generator' { PT _ (TS _ 22) }
+  'bool' { PT _ (TS _ 23) }
+  'else' { PT _ (TS _ 24) }
+  'false' { PT _ (TS _ 25) }
+  'for' { PT _ (TS _ 26) }
+  'func' { PT _ (TS _ 27) }
+  'func*' { PT _ (TS _ 28) }
+  'if' { PT _ (TS _ 29) }
+  'int' { PT _ (TS _ 30) }
+  'next' { PT _ (TS _ 31) }
+  'print' { PT _ (TS _ 32) }
+  'return' { PT _ (TS _ 33) }
+  'string' { PT _ (TS _ 34) }
+  'true' { PT _ (TS _ 35) }
+  'void' { PT _ (TS _ 36) }
+  'while' { PT _ (TS _ 37) }
+  'yield' { PT _ (TS _ 38) }
+  '{' { PT _ (TS _ 39) }
+  '||' { PT _ (TS _ 40) }
+  '}' { PT _ (TS _ 41) }
 
 L_ident  { PT _ (TV $$) }
 L_integ  { PT _ (TI $$) }
@@ -80,6 +82,7 @@ Stmt : ';' { AbsXYZgrammar.Empty }
      | 'if' '(' Expr ')' Block { AbsXYZgrammar.Cond $3 $5 }
      | 'if' '(' Expr ')' Block 'else' Block { AbsXYZgrammar.CondElse $3 $5 $7 }
      | 'while' '(' Expr ')' Block { AbsXYZgrammar.While $3 $5 }
+     | 'for' '(' Ident ':' Ident ')' Block { AbsXYZgrammar.ForGen $3 $5 $7 }
      | Expr ';' { AbsXYZgrammar.SExp $1 }
      | 'func' Type Ident '(' ListArg ')' Block { AbsXYZgrammar.Function $2 $3 $5 $7 }
      | 'func*' Type Ident '(' ListArg ')' Block { AbsXYZgrammar.GeneratorDef $2 $3 $5 $7 }

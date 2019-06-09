@@ -33,17 +33,18 @@ The set of reserved words is the set of terminals appearing in the grammar. Thos
 
 The reserved words used in XYZgrammar are the following:
   | ``Generator`` | ``bool`` | ``else`` | ``false``
-  | ``func`` | ``if`` | ``int`` | ``next``
-  | ``print`` | ``return`` | ``string`` | ``true``
-  | ``void`` | ``while`` | ``yield`` | 
+  | ``for`` | ``func`` | ``if`` | ``int``
+  | ``next`` | ``print`` | ``return`` | ``string``
+  | ``true`` | ``void`` | ``while`` | ``yield``
 
 The symbols used in XYZgrammar are the following:
   | { | } | ; | =
-  | , | ( | ) | &
-  | func* | . | - | !
-  | && | || | + | *
-  | / | % | < | <=
-  | > | >= | == | !=
+  | , | ( | ) | :
+  | & | func* | . | -
+  | ! | && | || | +
+  | * | / | % | <
+  | <= | > | >= | ==
+  | != |  |  | 
 
 ===Comments===
 Single-line comments begin with //.Multiple-line comments are  enclosed with /* and */.
@@ -67,6 +68,7 @@ All other symbols are terminals.
   |  |  **|**  | ``if`` ``(`` //Expr// ``)`` //Block// 
   |  |  **|**  | ``if`` ``(`` //Expr// ``)`` //Block// ``else`` //Block// 
   |  |  **|**  | ``while`` ``(`` //Expr// ``)`` //Block// 
+  |  |  **|**  | ``for`` ``(`` //Ident// ``:`` //Ident// ``)`` //Block// 
   |  |  **|**  | //Expr// ``;`` 
   |  |  **|**  | ``func`` //Type// //Ident// ``(`` //[Arg]// ``)`` //Block// 
   |  |  **|**  | ``func*`` //Type// //Ident// ``(`` //[Arg]// ``)`` //Block// 

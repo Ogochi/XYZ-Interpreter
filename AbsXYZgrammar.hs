@@ -24,6 +24,7 @@ data Stmt
     | Cond Expr Block
     | CondElse Expr Block Block
     | While Expr Block
+    | ForGen Ident Ident Block
     | SExp Expr
     | Function Type Ident [Arg] Block
     | GeneratorDef Type Ident [Arg] Block
