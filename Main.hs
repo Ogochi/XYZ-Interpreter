@@ -48,6 +48,7 @@ run mode s = let ts = myLLexer s in case pProgram ts of
                                 WrongArgsCountException s -> hPutStrLn stderr $ "Function '" ++ s ++ "' needs different number of args."
                                 ReturnNotInFunctionException -> hPutStrLn stderr $ "Return can be only inside function or main program."
                                 YieldNotInGeneratorException -> hPutStrLn stderr $ "Yield can be only inside generators."
+                                NextNotOnGeneratorException -> hPutStrLn stderr $ "'.next() can be used only on generator objects.'"
                               exitFailure
                             Right _ -> do
                               result <- runInterpret tree mode

@@ -130,10 +130,6 @@ checkStmt (Function returnType (Ident s) args block) = do
   result <- local (const (extendedEnv, returnType, True)) $ checkStmt (BStmt block)
   return $ Just newEnv
 
--- TODO
--- przypisanie do generatora tylko przez aplikację
--- next() tylko na generatorach
--- EApp
 checkStmt (GeneratorDef returnType (Ident s) args block) = do
   (env, _, _) <- ask
   let newEnv = insert s (Gen (returnType, argsToTypesList args)) env
@@ -232,10 +228,11 @@ checkExp (EApp ident exps) = do
           else throwError $ WrongTypeException "Args and params types mismatch in function application."
         else let (Ident s) = ident in throwError $ WrongArgsCountException s
 
--- checkExp (ENextGen ident) = do
---   memory <- getMemory ident
---   case memory of
---     Var (Generator) ->
+checkExp (ENextGen ident) = do
+  memory <- getMemory ident
+  case memory of
+    GenVar returnType -> return returnType
+    _ -> throwError $ NextNotOnGeneratorException
 
 -- Helper functions
 expsToTypes :: [Expr] -> StaticCheckMonad [Type]
