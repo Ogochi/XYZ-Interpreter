@@ -168,9 +168,7 @@ checkDeclItem (Generator returnType) (Init (Ident ident) exp) = do
   expType <- checkExp exp
   if expType == (Generator returnType)
     then do
-      let EApp (Ident genName) _ = exp
       (env, _, _) <- ask
-      let Just (Gen (returnType, _)) = lookup genName env
       return $ Just $ insert ident (GenVar returnType) env
     else throwError $ WrongTypeException "Initialization value type different from variable type."
 
