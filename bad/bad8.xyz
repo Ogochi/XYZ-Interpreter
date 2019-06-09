@@ -1,0 +1,7 @@
+
+// yield can be only inside generators
+func int a() {
+  println("xyz");
+
+  yield 10;
+}
