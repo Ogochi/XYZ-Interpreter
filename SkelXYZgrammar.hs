@@ -35,6 +35,7 @@ transStmt x = case x of
   GeneratorDef type_ ident args block -> failure x
   Yield expr -> failure x
   Print expr -> failure x
+  PrintLn expr -> failure x
 transItem :: Item -> Result
 transItem x = case x of
   NoInit ident -> failure x

@@ -35,6 +35,7 @@ Yield.        Stmt ::= "yield" Expr ";" ;
 -- Operations ----------------------------------------------
 
 Print.     Stmt ::= "print" "(" Expr ")" ";" ;
+PrintLn.   Stmt ::= "println" "(" Expr ")" ";" ;
 ENextGen. Expr6 ::= Ident "." "next" "(" ")" ;
 
 -- Types ---------------------------------------------------

@@ -45,15 +45,16 @@ import ErrM
   'int' { PT _ (TS _ 30) }
   'next' { PT _ (TS _ 31) }
   'print' { PT _ (TS _ 32) }
-  'return' { PT _ (TS _ 33) }
-  'string' { PT _ (TS _ 34) }
-  'true' { PT _ (TS _ 35) }
-  'void' { PT _ (TS _ 36) }
-  'while' { PT _ (TS _ 37) }
-  'yield' { PT _ (TS _ 38) }
-  '{' { PT _ (TS _ 39) }
-  '||' { PT _ (TS _ 40) }
-  '}' { PT _ (TS _ 41) }
+  'println' { PT _ (TS _ 33) }
+  'return' { PT _ (TS _ 34) }
+  'string' { PT _ (TS _ 35) }
+  'true' { PT _ (TS _ 36) }
+  'void' { PT _ (TS _ 37) }
+  'while' { PT _ (TS _ 38) }
+  'yield' { PT _ (TS _ 39) }
+  '{' { PT _ (TS _ 40) }
+  '||' { PT _ (TS _ 41) }
+  '}' { PT _ (TS _ 42) }
 
 L_ident  { PT _ (TV $$) }
 L_integ  { PT _ (TI $$) }
@@ -88,6 +89,7 @@ Stmt : ';' { AbsXYZgrammar.Empty }
      | 'func*' Type Ident '(' ListArg ')' Block { AbsXYZgrammar.GeneratorDef $2 $3 $5 $7 }
      | 'yield' Expr ';' { AbsXYZgrammar.Yield $2 }
      | 'print' '(' Expr ')' ';' { AbsXYZgrammar.Print $3 }
+     | 'println' '(' Expr ')' ';' { AbsXYZgrammar.PrintLn $3 }
 Item :: { Item }
 Item : Ident { AbsXYZgrammar.NoInit $1 }
      | Ident '=' Expr { AbsXYZgrammar.Init $1 $3 }

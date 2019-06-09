@@ -108,6 +108,7 @@ instance Print Stmt where
     GeneratorDef type_ id args block -> prPrec i 0 (concatD [doc (showString "func*"), prt 0 type_, prt 0 id, doc (showString "("), prt 0 args, doc (showString ")"), prt 0 block])
     Yield expr -> prPrec i 0 (concatD [doc (showString "yield"), prt 0 expr, doc (showString ";")])
     Print expr -> prPrec i 0 (concatD [doc (showString "print"), doc (showString "("), prt 0 expr, doc (showString ")"), doc (showString ";")])
+    PrintLn expr -> prPrec i 0 (concatD [doc (showString "println"), doc (showString "("), prt 0 expr, doc (showString ")"), doc (showString ";")])
   prtList _ [] = (concatD [])
   prtList _ (x:xs) = (concatD [prt 0 x, prt 0 xs])
 instance Print Item where

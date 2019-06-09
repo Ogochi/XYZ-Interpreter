@@ -30,6 +30,7 @@ data Stmt
     | GeneratorDef Type Ident [Arg] Block
     | Yield Expr
     | Print Expr
+    | PrintLn Expr
   deriving (Eq, Ord, Show, Read)
 
 data Item = NoInit Ident | Init Ident Expr

@@ -87,6 +87,9 @@ execStmt (BStmt (Block stmts)) = do
 -- Print
 execStmt (Print exp) = evalExp exp >>= liftIO . putStr . show >> justReturn
 
+-- PrintLn
+execStmt (PrintLn exp) = evalExp exp >>= liftIO . putStr . show >> liftIO (putStr "\n") >> justReturn
+
 -- If
 execStmt (Cond exp block) = execStmt $ CondElse exp block (Block [])
 

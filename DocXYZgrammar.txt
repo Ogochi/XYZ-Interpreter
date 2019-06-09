@@ -34,8 +34,9 @@ The set of reserved words is the set of terminals appearing in the grammar. Thos
 The reserved words used in XYZgrammar are the following:
   | ``Generator`` | ``bool`` | ``else`` | ``false``
   | ``for`` | ``func`` | ``if`` | ``int``
-  | ``next`` | ``print`` | ``return`` | ``string``
-  | ``true`` | ``void`` | ``while`` | ``yield``
+  | ``next`` | ``print`` | ``println`` | ``return``
+  | ``string`` | ``true`` | ``void`` | ``while``
+  | ``yield`` |  |  | 
 
 The symbols used in XYZgrammar are the following:
   | { | } | ; | =
@@ -74,6 +75,7 @@ All other symbols are terminals.
   |  |  **|**  | ``func*`` //Type// //Ident// ``(`` //[Arg]// ``)`` //Block// 
   |  |  **|**  | ``yield`` //Expr// ``;`` 
   |  |  **|**  | ``print`` ``(`` //Expr// ``)`` ``;`` 
+  |  |  **|**  | ``println`` ``(`` //Expr// ``)`` ``;`` 
   | //Item// | -> | //Ident// 
   |  |  **|**  | //Ident// ``=`` //Expr// 
   | //[Item]// | -> | //Item// 

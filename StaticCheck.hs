@@ -41,6 +41,9 @@ checkStmt (Print exp) = do
   checkExp exp
   return Nothing
 
+-- PrintLn
+checkStmt (PrintLn exp) = checkStmt (Print exp)
+
 -- Yield
 checkStmt (Yield exp) = do
   expType <- checkExp exp
