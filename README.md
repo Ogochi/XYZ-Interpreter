@@ -3,8 +3,7 @@
 Project includes implementation of interpreter for custom language programming **XYZ**.
 Interpreter is written purely in **haskell**.
 Grammar of the language is presented in file `XYZgrammar.cf` in BNF format.
-It allowed me to use [**BNFC**](https://bnfc.digitalgrammars.com/) to generate
-easily parser and simple docs.
+It allowed me to use [**BNFC**](https://bnfc.digitalgrammars.com/) to generate easily parser and simple docs.
 
 Everything is done as a part of class "Programming Languages and Paradigms" during summer term 2019
 at University of Warsaw.
@@ -145,7 +144,7 @@ println(myGenInstance.nextOrDefault(var));
 - Overriding of identifiers with static binding
 - Handling runtime exceptions
 - Nesting of function definitions and returning every possible type
-- Extended Generators: Nesting of generators, Generators return every possible type, for loop over all generator values, parametrisation of generators like functions, .next() and .nextOrDefault() methods 
+- Extended Generators: Nesting of generators, Generators return every possible type, for loop over all generator values, parametrisation of generators like functions, .next() and .nextOrDefault() methods
 - Static typing
 
 **Expected points count:** 30 / 30
