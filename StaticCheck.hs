@@ -122,6 +122,13 @@ checkStmt (Cond exp block) = checkStmt (CondElse exp block (Block []))
 -- While
 checkStmt (While exp block) = checkStmt (Cond exp block)
 
+-- -- ForGen
+-- checkStmt (ForGen ident1 ident2 block) = do
+--   var2 <- getMemory ident2
+--   case var2 of
+--     GenVar returnType ->
+--     _ -> throwError $ ForGenOnlyOverGeneratorException
+
 -- Function
 checkStmt (Function returnType (Ident s) args block) = do
   (env, _, _) <- ask

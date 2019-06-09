@@ -82,7 +82,7 @@ Stmt : ';' { AbsXYZgrammar.Empty }
      | 'if' '(' Expr ')' Block { AbsXYZgrammar.Cond $3 $5 }
      | 'if' '(' Expr ')' Block 'else' Block { AbsXYZgrammar.CondElse $3 $5 $7 }
      | 'while' '(' Expr ')' Block { AbsXYZgrammar.While $3 $5 }
-     | 'for' '(' Ident ':' Ident ')' Block { AbsXYZgrammar.ForGen $3 $5 $7 }
+     | 'for' '(' Ident ':' Expr ')' Block { AbsXYZgrammar.ForGen $3 $5 $7 }
      | Expr ';' { AbsXYZgrammar.SExp $1 }
      | 'func' Type Ident '(' ListArg ')' Block { AbsXYZgrammar.Function $2 $3 $5 $7 }
      | 'func*' Type Ident '(' ListArg ')' Block { AbsXYZgrammar.GeneratorDef $2 $3 $5 $7 }

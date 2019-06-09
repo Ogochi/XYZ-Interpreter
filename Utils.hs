@@ -32,6 +32,7 @@ updateGen loc stmts env = do
 getVar :: Ident -> PStateMonad Memory
 getVar (Ident s) = do
   Just location <- asks $ lookup s
+
   (mem, _, _) <- get
   return $ fromJust $ lookup location mem
 

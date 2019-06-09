@@ -109,28 +109,10 @@ execStmt (While exp block) = do
     justReturn
 
 -- ForGen
-execStmt (ForGen ident1 ident2 block) = do
-  GenVar (returnType, stmts, env) <- getVar ident2
-  (result, stmtsLeft, newEnv) <- local (const env) $ interpretGenStmts stmts
-
-  varLoc <- getIdentLoc ident2
-  updateGen varLoc stmtsLeft newEnv
-
-  case result of
-    Nothing -> justReturn
-    Just resultValue -> do
-      env <- ask
-      (_, newEnv) <- addVarToEnv env ident1 resultValue
-      blockResult <- local (const newEnv) $ execStmt (BStmt block)
-
-      finalResult <- case blockResult of
-                      (Nothing, _) -> do
-                        next <- local id $ execStmt (ForGen ident1 ident2 block)
-                        return next
-                      (r1, r2) -> do
-                        return (r1, r2)
-      return finalResult
-
+execStmt (ForGen ident exp block) = do
+  genVar <- evalExp exp
+  result <- evalForGen genVar ident block
+  return result
 
 -- Ass
 execStmt (Ass ident exp) = evalExp exp >>= setVar ident >>= return
@@ -240,6 +222,25 @@ evalExp (Neg exp) = do
   return $ IntVar $ -res
 
 -- Helper functions
+
+evalForGen :: Memory -> Ident -> Block -> PStateMonad Result
+evalForGen (GenVar (returnType, stmts, env)) ident block = do
+  (result, stmtsLeft, newEnv) <- local (const env) $ interpretGenStmts stmts
+
+  case result of
+    Nothing -> justReturn
+    Just resultValue -> do
+      env <- ask
+      (_, extEnv) <- addVarToEnv env ident resultValue
+      blockResult <- local (const extEnv) $ execStmt (BStmt block)
+
+      finalResult <- case blockResult of
+                      (Nothing, _) -> do
+                        next <- local id $ evalForGen (GenVar (returnType, stmtsLeft, newEnv)) ident block
+                        return next
+                      (r1, r2) -> do
+                        return (r1, r2)
+      return finalResult
 
 addDecl :: Type -> Item -> PStateMonad Result
 addDecl _ (Init ident exp) = do

@@ -29,3 +29,4 @@ data StaticCheckException =
   | GeneratorHasNotValueException
   | GeneratorVarHasNotValueException
   | NextNotOnGeneratorException
+  | ForGenOnlyOverGeneratorException
