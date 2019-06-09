@@ -44,17 +44,18 @@ import ErrM
   'if' { PT _ (TS _ 29) }
   'int' { PT _ (TS _ 30) }
   'next' { PT _ (TS _ 31) }
-  'print' { PT _ (TS _ 32) }
-  'println' { PT _ (TS _ 33) }
-  'return' { PT _ (TS _ 34) }
-  'string' { PT _ (TS _ 35) }
-  'true' { PT _ (TS _ 36) }
-  'void' { PT _ (TS _ 37) }
-  'while' { PT _ (TS _ 38) }
-  'yield' { PT _ (TS _ 39) }
-  '{' { PT _ (TS _ 40) }
-  '||' { PT _ (TS _ 41) }
-  '}' { PT _ (TS _ 42) }
+  'nextOrDefault' { PT _ (TS _ 32) }
+  'print' { PT _ (TS _ 33) }
+  'println' { PT _ (TS _ 34) }
+  'return' { PT _ (TS _ 35) }
+  'string' { PT _ (TS _ 36) }
+  'true' { PT _ (TS _ 37) }
+  'void' { PT _ (TS _ 38) }
+  'while' { PT _ (TS _ 39) }
+  'yield' { PT _ (TS _ 40) }
+  '{' { PT _ (TS _ 41) }
+  '||' { PT _ (TS _ 42) }
+  '}' { PT _ (TS _ 43) }
 
 L_ident  { PT _ (TV $$) }
 L_integ  { PT _ (TI $$) }
@@ -104,6 +105,7 @@ ListArg : {- empty -} { [] }
         | Arg ',' ListArg { (:) $1 $3 }
 Expr6 :: { Expr }
 Expr6 : Ident '.' 'next' '(' ')' { AbsXYZgrammar.ENextGen $1 }
+      | Ident '.' 'nextOrDefault' '(' Expr ')' { AbsXYZgrammar.ENextDefaultGen $1 $5 }
       | Ident { AbsXYZgrammar.EVar $1 }
       | Integer { AbsXYZgrammar.ELitInt $1 }
       | 'true' { AbsXYZgrammar.ELitTrue }

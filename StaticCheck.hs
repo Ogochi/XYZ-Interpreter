@@ -248,6 +248,16 @@ checkExp (ENextGen ident) = do
     GenVar returnType -> return returnType
     _ -> throwError $ NextNotOnGeneratorException
 
+checkExp (ENextDefaultGen ident exp) = do
+  memory <- getMemory ident
+  case memory of
+    GenVar returnType -> do
+      expType <- checkExp exp
+      if expType == returnType
+        then return returnType
+        else throwError $ WrongTypeException "Default value in .nextOrDefault() should have the same type as generator."
+    _ -> throwError $ NextNotOnGeneratorException
+
 -- Helper functions
 expsToTypes :: [Expr] -> StaticCheckMonad [Type]
 expsToTypes [] = return []

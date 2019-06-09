@@ -135,6 +135,7 @@ instance Print Type where
 instance Print Expr where
   prt i e = case e of
     ENextGen id -> prPrec i 6 (concatD [prt 0 id, doc (showString "."), doc (showString "next"), doc (showString "("), doc (showString ")")])
+    ENextDefaultGen id expr -> prPrec i 6 (concatD [prt 0 id, doc (showString "."), doc (showString "nextOrDefault"), doc (showString "("), prt 0 expr, doc (showString ")")])
     EVar id -> prPrec i 6 (concatD [prt 0 id])
     ELitInt n -> prPrec i 6 (concatD [prt 0 n])
     ELitTrue -> prPrec i 6 (concatD [doc (showString "true")])

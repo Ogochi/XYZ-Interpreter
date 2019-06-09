@@ -54,6 +54,7 @@ transType x = case x of
 transExpr :: Expr -> Result
 transExpr x = case x of
   ENextGen ident -> failure x
+  ENextDefaultGen ident expr -> failure x
   EVar ident -> failure x
   ELitInt integer -> failure x
   ELitTrue -> failure x

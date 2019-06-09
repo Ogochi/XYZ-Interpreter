@@ -44,6 +44,7 @@ data Type = Int | Str | Bool | Void | Generator Type
 
 data Expr
     = ENextGen Ident
+    | ENextDefaultGen Ident Expr
     | EVar Ident
     | ELitInt Integer
     | ELitTrue

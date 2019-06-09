@@ -177,6 +177,19 @@ evalExp (ENextGen ident) = do
       updateGen varLoc stmtsLeft newEnv
       return resultValue
 
+evalExp (ENextDefaultGen ident exp) = do
+  GenVar (returnType, stmts, env) <- getVar ident
+
+  (result, stmtsLeft, newEnv) <- local (const env) $ interpretGenStmts stmts
+  case result of
+    Nothing -> do
+      expResult <- evalExp exp
+      return expResult
+    Just resultValue -> do
+      varLoc <- getIdentLoc ident
+      updateGen varLoc stmtsLeft newEnv
+      return resultValue
+
 evalExp (EVar ident) = getVar ident
 
 evalExp (ELitInt num) = return $ IntVar num
