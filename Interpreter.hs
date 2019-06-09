@@ -133,6 +133,7 @@ execStmt (SExp exp) = do
   mode <- getInterpreterMode
   case mode of
     StdinMode -> liftIO . putStr . show $ result
+    FileMode -> liftIO (putStr "")
 
   justReturn
 

@@ -7,15 +7,15 @@ func string myFunction(int a, int b) {
     if (i >= 0) {
       return xxx();
     } else {
-      print("koniec");
+      println("koniec");
     }
 
     return 5;
   }
-  print(xxx());
+  println(xxx());
 
-  return "myFunction\n";
+  return "myFunction";
 }
 
-myFunction(1, 2);
-myFunction(1, 2);
+println(myFunction(1, 2));
+println(myFunction(1, 2));

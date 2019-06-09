@@ -6,4 +6,4 @@ func void changeBool(bool & a) {
 }
 
 changeBool(a);
-print(a); // false
+println(a); // false

@@ -15,4 +15,4 @@ if (a) {
   }
 }
 
-print(txt + "\n");
+println(txt);
