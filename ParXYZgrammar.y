@@ -114,7 +114,7 @@ Type : 'int' { AbsXYZgrammar.Int }
      | 'string' { AbsXYZgrammar.Str }
      | 'bool' { AbsXYZgrammar.Bool }
      | 'void' { AbsXYZgrammar.Void }
-     | 'Generator' { AbsXYZgrammar.Generator }
+     | 'Generator' '<' Type '>' { AbsXYZgrammar.Generator $3 }
 Expr5 :: { Expr }
 Expr5 : '-' Expr6 { AbsXYZgrammar.Neg $2 }
       | '!' Expr6 { AbsXYZgrammar.Not $2 }

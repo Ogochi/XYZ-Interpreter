@@ -129,7 +129,7 @@ instance Print Type where
     Str -> prPrec i 0 (concatD [doc (showString "string")])
     Bool -> prPrec i 0 (concatD [doc (showString "bool")])
     Void -> prPrec i 0 (concatD [doc (showString "void")])
-    Generator -> prPrec i 0 (concatD [doc (showString "Generator")])
+    Generator type_ -> prPrec i 0 (concatD [doc (showString "Generator"), doc (showString "<"), prt 0 type_, doc (showString ">")])
 
 instance Print Expr where
   prt i e = case e of

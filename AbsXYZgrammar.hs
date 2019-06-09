@@ -38,7 +38,7 @@ data Item = NoInit Ident | Init Ident Expr
 data Arg = ValArg Type Ident | RefArg Type Ident
   deriving (Eq, Ord, Show, Read)
 
-data Type = Int | Str | Bool | Void | Generator
+data Type = Int | Str | Bool | Void | Generator Type
   deriving (Eq, Ord, Show, Read)
 
 data Expr

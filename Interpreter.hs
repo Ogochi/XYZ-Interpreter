@@ -252,7 +252,7 @@ addDecl declType (NoInit ident) = do
                 Int -> ELitInt 0
                 Str -> EString ""
                 Bool -> ELitFalse
-                Generator -> EString ""
+                Generator _ -> EString ""
   result <- addDecl declType (Init ident value)
   return result
 

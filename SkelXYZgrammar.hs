@@ -49,7 +49,7 @@ transType x = case x of
   Str -> failure x
   Bool -> failure x
   Void -> failure x
-  Generator -> failure x
+  Generator type_ -> failure x
 transExpr :: Expr -> Result
 transExpr x = case x of
   ENextGen ident -> failure x

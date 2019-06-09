@@ -40,10 +40,10 @@ The reserved words used in XYZgrammar are the following:
 The symbols used in XYZgrammar are the following:
   | { | } | ; | =
   | , | ( | ) | :
-  | & | func* | . | -
-  | ! | && | || | +
-  | * | / | % | <
-  | <= | > | >= | ==
+  | & | func* | . | <
+  | > | - | ! | &&
+  | || | + | * | /
+  | % | <= | >= | ==
   | != |  |  | 
 
 ===Comments===
@@ -95,7 +95,7 @@ All other symbols are terminals.
   |  |  **|**  | ``string`` 
   |  |  **|**  | ``bool`` 
   |  |  **|**  | ``void`` 
-  |  |  **|**  | ``Generator`` 
+  |  |  **|**  | ``Generator`` ``<`` //Type// ``>`` 
   | //Expr5// | -> | ``-`` //Expr6// 
   |  |  **|**  | ``!`` //Expr6// 
   |  |  **|**  | //Expr6// 

@@ -43,7 +43,7 @@ Int.       Type ::= "int" ;
 Str.       Type ::= "string" ;
 Bool.      Type ::= "bool" ;
 Void.      Type ::= "void" ;
-Generator. Type ::= "Generator" ;
+Generator. Type ::= "Generator" "<" Type ">" ;
 
 -- Expressions ---------------------------------------------
 

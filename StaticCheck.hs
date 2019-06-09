@@ -93,7 +93,7 @@ checkStmt (Ass ident exp) = do
     Func _ -> throwError $ WrongTypeException "Couldn't assign value to function."
     Var varType -> if varType == expType
       then case varType of
-        Generator -> do
+        Generator _ -> do
           let EApp (Ident genName) _ = exp
           (env, _, _) <- ask
           let Just (Gen (returnType, _)) = lookup genName env
@@ -122,12 +122,15 @@ checkStmt (Cond exp block) = checkStmt (CondElse exp block (Block []))
 -- While
 checkStmt (While exp block) = checkStmt (Cond exp block)
 
--- -- ForGen
--- checkStmt (ForGen ident1 ident2 block) = do
---   var2 <- getMemory ident2
---   case var2 of
---     GenVar returnType ->
---     _ -> throwError $ ForGenOnlyOverGeneratorException
+-- ForGen
+checkStmt (ForGen (Ident s) exp block) = do
+  expType <- checkExp exp
+  case expType of
+    Generator returnType -> do
+      (env, funType, isFun) <- ask
+      _ <- local (const (insert s (Var returnType) env, funType, isFun)) $ checkStmt (BStmt block)
+      return Nothing
+    _ -> throwError $ ForGenOnlyOverGeneratorException
 
 -- Function
 checkStmt (Function returnType (Ident s) args block) = do
@@ -158,9 +161,9 @@ checkDeclItem itemType (NoInit (Ident s)) = do
   (env, funcType, _) <- ask
   return $ Just $ insert s (Var itemType) env
 
-checkDeclItem Generator (Init (Ident ident) exp) = do
+checkDeclItem (Generator returnType) (Init (Ident ident) exp) = do
   expType <- checkExp exp
-  if expType == Generator
+  if expType == (Generator returnType)
     then do
       let EApp (Ident genName) _ = exp
       (env, _, _) <- ask
@@ -211,10 +214,11 @@ checkExp (Not exp) =
 checkExp (EVar ident) = do
   var <- getMemory ident
   case var of
-    Var (Generator) -> throwError $ GeneratorVarHasNotValueException
+    Var (Generator _) -> throwError $ GeneratorVarHasNotValueException
     Var varType -> return varType
     Func (_, _) -> throwError $ FunctionHasNotValueException
     Gen (_, _) -> throwError $ GeneratorHasNotValueException
+    GenVar returnType -> return $ Generator returnType
 
 checkExp (EApp ident exps) = do
   memory <- getMemory ident
@@ -224,7 +228,7 @@ checkExp (EApp ident exps) = do
       typesFromExps <- expsToTypes exps
       if length typesFromExps == length argTypes
         then if typesFromExps == argTypes
-          then return Generator
+          then return $ Generator returnType
           else throwError $ WrongTypeException "Args and params types mismatch in generator creation."
         else let (Ident s) = ident in throwError $ WrongArgsCountException s
     Func (returnType, argTypes) -> do
