@@ -139,25 +139,33 @@ checkStmt (ForGen (Ident s) exp block) = do
 checkStmt (Function returnType (Ident s) args block) = do
   (env, _, _) <- ask
   let newEnv = insert s (Func (returnType, argsToTypesList args)) env
-  let extendedEnv = extendEnvByArgs newEnv args
+  extendedEnv <- extendEnvByArgs newEnv args
   result <- local (const (extendedEnv, returnType, True)) $ checkStmt (BStmt block)
   return $ Just newEnv
 
 checkStmt (GeneratorDef returnType (Ident s) args block) = do
   (env, _, _) <- ask
   let newEnv = insert s (Gen (returnType, argsToTypesList args)) env
-  let extendedEnv = extendEnvByArgs newEnv args
+  extendedEnv <- extendEnvByArgs newEnv args
   result <- local (const (extendedEnv, returnType, False)) $ checkStmt (BStmt block)
   return $ Just newEnv
 
 -- Helper functions
 
-extendEnvByArgs :: StaticCheckEnv -> [Arg] -> StaticCheckEnv
-extendEnvByArgs env [] = env
-extendEnvByArgs env ((ValArg argType (Ident s)):rest) =
-  extendEnvByArgs (insert s (Var argType) env) rest
-extendEnvByArgs env ((RefArg argType (Ident s)):rest) =
-  extendEnvByArgs (insert s (Var argType) env) rest
+extendEnvByArgs :: StaticCheckEnv -> [Arg] -> StaticCheckMonad StaticCheckEnv
+extendEnvByArgs env [] = return env
+extendEnvByArgs env ((ValArg argType (Ident s)):rest) = do
+  if argType == Void
+    then throwError VoidVariableException
+    else do
+       result <- extendEnvByArgs (insert s (Var argType) env) rest
+       return result
+extendEnvByArgs env ((RefArg argType (Ident s)):rest) = do
+  if argType == Void
+    then throwError VoidVariableException
+    else do
+      result <- extendEnvByArgs (insert s (Var argType) env) rest
+      return result
 
 checkDeclItem :: Type -> Item -> StaticCheckMonad (Maybe StaticCheckEnv)
 checkDeclItem itemType (NoInit (Ident s)) = do
