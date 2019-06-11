@@ -23,7 +23,7 @@ int start = 0, end = 4;
 while (start <= end) {
   Generator<int> g = gg.nextOrDefault(genOfLife());
 
-  for (val : g) {
+  for (int val : g) {
     println(val);
   }
   println("------------");

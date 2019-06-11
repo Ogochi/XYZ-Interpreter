@@ -29,7 +29,7 @@ transStmt x = case x of
   Cond expr block -> failure x
   CondElse expr block1 block2 -> failure x
   While expr block -> failure x
-  ForGen ident expr block -> failure x
+  ForGen type_ ident expr block -> failure x
   SExp expr -> failure x
   Function type_ ident args block -> failure x
   GeneratorDef type_ ident args block -> failure x

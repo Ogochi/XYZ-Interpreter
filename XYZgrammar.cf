@@ -21,7 +21,7 @@ VRet.      Stmt ::= "return" ";" ;
 Cond.      Stmt ::= "if" "(" Expr ")" Block  ;
 CondElse.  Stmt ::= "if" "(" Expr ")" Block "else" Block  ;
 While.     Stmt ::= "while" "(" Expr ")" Block ;
-ForGen.    Stmt ::= "for" "(" Ident ":" Expr ")" Block ;
+ForGen.    Stmt ::= "for" "(" Type Ident ":" Expr ")" Block ;
 SExp.      Stmt ::= Expr ";" ;
 
 Function.  Stmt ::= "func" Type Ident "(" [Arg] ")" Block ;

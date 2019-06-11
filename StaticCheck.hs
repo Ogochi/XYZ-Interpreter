@@ -126,13 +126,16 @@ checkStmt (Cond exp block) = checkStmt (CondElse exp block (Block []))
 checkStmt (While exp block) = checkStmt (Cond exp block)
 
 -- ForGen
-checkStmt (ForGen (Ident s) exp block) = do
+checkStmt (ForGen identType (Ident s) exp block) = do
   expType <- checkExp exp
   case expType of
     Generator returnType -> do
       (env, funType, isFun) <- ask
-      _ <- local (const (insert s (Var returnType) env, funType, isFun)) $ checkStmt (BStmt block)
-      return Nothing
+      if identType == returnType
+        then do
+           _ <- local (const (insert s (Var returnType) env, funType, isFun)) $ checkStmt (BStmt block)
+           return Nothing
+        else throwError $ WrongTypeException "Var in for generator should have the same type as generator."
     _ -> throwError $ ForGenOnlyOverGeneratorException
 
 -- Function

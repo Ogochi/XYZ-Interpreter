@@ -113,7 +113,7 @@ execStmt (While exp block) = do
     justReturn
 
 -- ForGen
-execStmt (ForGen ident exp block) = do
+execStmt (ForGen _ ident exp block) = do
   genVar <- evalExp exp
   result <- evalForGen genVar ident block
   return result

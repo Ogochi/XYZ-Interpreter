@@ -102,7 +102,7 @@ instance Print Stmt where
     Cond expr block -> prPrec i 0 (concatD [doc (showString "if"), doc (showString "("), prt 0 expr, doc (showString ")"), prt 0 block])
     CondElse expr block1 block2 -> prPrec i 0 (concatD [doc (showString "if"), doc (showString "("), prt 0 expr, doc (showString ")"), prt 0 block1, doc (showString "else"), prt 0 block2])
     While expr block -> prPrec i 0 (concatD [doc (showString "while"), doc (showString "("), prt 0 expr, doc (showString ")"), prt 0 block])
-    ForGen id expr block -> prPrec i 0 (concatD [doc (showString "for"), doc (showString "("), prt 0 id, doc (showString ":"), prt 0 expr, doc (showString ")"), prt 0 block])
+    ForGen type_ id expr block -> prPrec i 0 (concatD [doc (showString "for"), doc (showString "("), prt 0 type_, prt 0 id, doc (showString ":"), prt 0 expr, doc (showString ")"), prt 0 block])
     SExp expr -> prPrec i 0 (concatD [prt 0 expr, doc (showString ";")])
     Function type_ id args block -> prPrec i 0 (concatD [doc (showString "func"), prt 0 type_, prt 0 id, doc (showString "("), prt 0 args, doc (showString ")"), prt 0 block])
     GeneratorDef type_ id args block -> prPrec i 0 (concatD [doc (showString "func*"), prt 0 type_, prt 0 id, doc (showString "("), prt 0 args, doc (showString ")"), prt 0 block])

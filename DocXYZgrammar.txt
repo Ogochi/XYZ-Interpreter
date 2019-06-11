@@ -69,7 +69,7 @@ All other symbols are terminals.
   |  |  **|**  | ``if`` ``(`` //Expr// ``)`` //Block// 
   |  |  **|**  | ``if`` ``(`` //Expr// ``)`` //Block// ``else`` //Block// 
   |  |  **|**  | ``while`` ``(`` //Expr// ``)`` //Block// 
-  |  |  **|**  | ``for`` ``(`` //Ident// ``:`` //Expr// ``)`` //Block// 
+  |  |  **|**  | ``for`` ``(`` //Type// //Ident// ``:`` //Expr// ``)`` //Block// 
   |  |  **|**  | //Expr// ``;`` 
   |  |  **|**  | ``func`` //Type// //Ident// ``(`` //[Arg]// ``)`` //Block// 
   |  |  **|**  | ``func*`` //Type// //Ident// ``(`` //[Arg]// ``)`` //Block// 
