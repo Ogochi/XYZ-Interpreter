@@ -30,3 +30,4 @@ data StaticCheckException =
   | GeneratorVarHasNotValueException
   | NextNotOnGeneratorException
   | ForGenOnlyOverGeneratorException
+  | VoidVariableException

@@ -162,7 +162,10 @@ extendEnvByArgs env ((RefArg argType (Ident s)):rest) =
 checkDeclItem :: Type -> Item -> StaticCheckMonad (Maybe StaticCheckEnv)
 checkDeclItem itemType (NoInit (Ident s)) = do
   (env, funcType, _) <- ask
-  return $ Just $ insert s (Var itemType) env
+  case itemType of
+    Void -> throwError VoidVariableException
+    itemType -> do
+      return $ Just $ insert s (Var itemType) env
 
 checkDeclItem (Generator returnType) (Init (Ident ident) exp) = do
   expType <- checkExp exp

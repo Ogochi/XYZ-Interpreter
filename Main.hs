@@ -50,6 +50,7 @@ run mode s = let ts = myLLexer s in case pProgram ts of
                                 YieldNotInGeneratorException -> hPutStrLn stderr $ "Yield can be only inside generators."
                                 NextNotOnGeneratorException -> hPutStrLn stderr $ "'.next() can be used only on generator objects.'"
                                 ForGenOnlyOverGeneratorException -> hPutStrLn stderr $ "In 'for (var : gen) {...}' 'gen' should be generator object variable"
+                                VoidVariableException -> hPutStrLn stderr $ "Variables of type void are forbidden."
                               exitFailure
                             Right _ -> do
                               result <- runInterpret tree mode
