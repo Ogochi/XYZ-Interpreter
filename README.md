@@ -147,4 +147,4 @@ println(myGenInstance.nextOrDefault(var));
 - Extended Generators: Nesting of generators, Generators return every possible type, for loop over all generator values, parametrisation of generators like functions, .next() and .nextOrDefault() methods
 - Static typing
 
-**Expected points count:** 30 / 30
+**Points received:** 30 / 30
